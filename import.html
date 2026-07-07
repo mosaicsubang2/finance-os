@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0C0E14">
+<title>Import MBB Transactions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0E14;color:#EFF2FA;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:30px 20px;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.card{background:#161B27;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;width:100%;max-width:380px}
+h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+p{font-size:.82rem;color:#8A9BBE;line-height:1.5;margin-bottom:14px}
+.month-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.84rem}
+.month-row:last-child{border-bottom:none}
+.month-row .label{color:#EFF2FA;font-weight:600}
+.month-row .counts{color:#5B6788;font-size:.75rem}
+.badge{background:rgba(31,217,164,.1);color:#1FD9A4;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px}
+.btn{width:100%;background:#1FD9A4;color:#000;font-size:1rem;font-weight:700;border:none;border-radius:16px;padding:15px;cursor:pointer;font-family:inherit;margin-top:6px}
+.btn:active{opacity:.85}
+.btn-skip{width:100%;background:rgba(255,255,255,.05);color:#8A9BBE;font-size:.85rem;font-weight:600;border:none;border-radius:16px;padding:12px;cursor:pointer;font-family:inherit}
+#status{text-align:center;font-size:.88rem;font-weight:600;min-height:24px}
+.success{color:#1FD9A4}.error{color:#FF6060}
+.progress-bar{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;background:#1FD9A4;border-radius:3px;width:0%;transition:width .5s}
+a{color:#1FD9A4;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>📥 MBB Bank Import</h1>
+  <p>从 Maybank 银行对账单导入交易记录，共 <strong style="color:#EFF2FA">3个月</strong>。</p>
+
+  <div class="month-row">
+    <span class="label">🗓 January 2026</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="counts">33笔</span>
+      <span class="badge">✓</span>
+    </div>
+  </div>
+  <div class="month-row">
+    <span class="label">🗓 February 2026</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="counts">49笔</span>
+      <span class="badge">✓</span>
+    </div>
+  </div>
+  <div class="month-row">
+    <span class="label">🗓 March 2026</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="counts">38笔</span>
+      <span class="badge">✓</span>
+    </div>
+  </div>
+
+  <div class="progress-bar" id="bar"><div class="progress-fill" id="fill"></div></div>
+  <div id="status" style="margin-top:10px"></div>
+
+  <button class="btn" onclick="doImport()" id="importBtn" style="margin-top:16px">开始导入 120 笔交易</button>
+  <div style="height:8px"></div>
+  <button class="btn-skip" onclick="goApp()">跳过，直接进入 App</button>
+</div>
+
+<div style="text-align:center;font-size:.75rem;color:#5B6788;max-width:320px;line-height:1.5">
+  导入完成后会自动跳转到 App。<br>内部转账（TNG充值、存款）已过滤。
+</div>
+
+<script>
+const MBB_TXNS = [
+// ═══ JANUARY 2026 ═══
+// Income - Commissions
+{id:101,type:'income',cat:'commission',desc:'佣金 PRO (Dec 2025)',amt:4355.55,date:'2026-01-02'},
+{id:102,type:'income',cat:'commission',desc:'佣金 PRO (Dec 2025)',amt:15257.96,date:'2026-01-02'},
+{id:103,type:'income',cat:'commission',desc:'佣金 COM (Dec 2025)',amt:315.79,date:'2026-01-02'},
+{id:104,type:'income',cat:'other',desc:'Maybank Ventures 退款',amt:1779.00,date:'2026-01-12'},
+{id:105,type:'income',cat:'commission',desc:'佣金 PRO (Jan 15)',amt:984.14,date:'2026-01-16'},
+{id:106,type:'income',cat:'commission',desc:'佣金 PRO (Jan 15)',amt:6623.33,date:'2026-01-16'},
+{id:107,type:'income',cat:'commission',desc:'佣金 PRO (Jan 21)',amt:135.89,date:'2026-01-23'},
+{id:108,type:'income',cat:'commission',desc:'佣金 COM (Jan 22)',amt:2131.50,date:'2026-01-23'},
+{id:109,type:'income',cat:'other',desc:'Taipanika 活动收款 (Leong)',amt:2776.00,date:'2026-01-29'},
+{id:110,type:'income',cat:'commission',desc:'佣金 PRO (Jan 30)',amt:627.52,date:'2026-01-30'},
+// Expenses Jan
+{id:151,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1000.00,date:'2026-01-03'},
+{id:152,type:'expense',cat:'entertainment',desc:'旅游费 - Alicia Law',amt:5000.00,date:'2026-01-05'},
+{id:153,type:'expense',cat:'other',desc:'Wise 海外转账',amt:2000.00,date:'2026-01-06'},
+{id:154,type:'expense',cat:'other',desc:'Wise 海外转账',amt:10000.00,date:'2026-01-08'},
+{id:155,type:'expense',cat:'other',desc:'Wise 海外转账',amt:200.00,date:'2026-01-10'},
+{id:156,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1000.00,date:'2026-01-11'},
+{id:157,type:'expense',cat:'transport',desc:'GrabPay',amt:150.00,date:'2026-01-11'},
+{id:158,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:90.00,date:'2026-01-12'},
+{id:159,type:'expense',cat:'other',desc:'Ng Tzu Yeh - Kezee',amt:416.00,date:'2026-01-13'},
+{id:160,type:'expense',cat:'housing',desc:'Andari 管理费',amt:400.00,date:'2026-01-14'},
+{id:161,type:'expense',cat:'food',desc:'Najath Corner 餐厅',amt:17.00,date:'2026-01-16'},
+{id:162,type:'expense',cat:'other',desc:'Amy Cat Enterprise (宠物)',amt:107.00,date:'2026-01-16'},
+{id:163,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:24.35,date:'2026-01-16'},
+{id:164,type:'expense',cat:'ads',desc:'Facebook Ads',amt:85.00,date:'2026-01-17'},
+{id:165,type:'expense',cat:'transport',desc:'GrabPay',amt:320.00,date:'2026-01-17'},
+{id:166,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:498.95,date:'2026-01-17'},
+{id:167,type:'expense',cat:'other',desc:'Agent 奖励 - Foo Wei Hong',amt:1000.00,date:'2026-01-20'},
+{id:168,type:'expense',cat:'other',desc:'Esha Lim Wan Yi 付款',amt:500.00,date:'2026-01-20'},
+{id:169,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:100.00,date:'2026-01-21'},
+{id:170,type:'expense',cat:'ads',desc:'Facebook Ads',amt:120.00,date:'2026-01-21'},
+{id:171,type:'expense',cat:'housing',desc:'车贷 (Auto Debit)',amt:1486.83,date:'2026-01-22'},
+{id:172,type:'expense',cat:'food',desc:'Ditan Hotpot',amt:240.70,date:'2026-01-24'},
+{id:173,type:'expense',cat:'ads',desc:'Facebook Ads',amt:244.86,date:'2026-01-27'},
+{id:174,type:'expense',cat:'other',desc:'Monee Capital 还款',amt:339.01,date:'2026-01-27'},
+{id:175,type:'expense',cat:'ads',desc:'Facebook Ads',amt:300.00,date:'2026-01-30'},
+{id:176,type:'expense',cat:'transport',desc:'GrabPay',amt:10.00,date:'2026-01-30'},
+{id:177,type:'expense',cat:'transport',desc:'GrabPay',amt:49.00,date:'2026-01-30'},
+{id:178,type:'expense',cat:'food',desc:'Dol Dam 餐厅',amt:330.00,date:'2026-01-31'},
+{id:179,type:'expense',cat:'other',desc:'Wise 海外转账',amt:200.00,date:'2026-01-31'},
+
+// ═══ FEBRUARY 2026 ═══
+// Income Feb
+{id:201,type:'income',cat:'other',desc:'Foo Wei Hong 收款',amt:104.00,date:'2026-02-01'},
+{id:202,type:'income',cat:'other',desc:'Alicia Law - Taobao',amt:700.00,date:'2026-02-04'},
+{id:203,type:'income',cat:'commission',desc:'佣金 PRO (Feb 6)',amt:102.38,date:'2026-02-06'},
+{id:204,type:'income',cat:'commission',desc:'佣金 PRO (Feb 6)',amt:22451.30,date:'2026-02-06'},
+{id:205,type:'income',cat:'commission',desc:'佣金 PRO (Feb 12)',amt:3281.34,date:'2026-02-13'},
+{id:206,type:'income',cat:'other',desc:'收款 - 钱包',amt:150.00,date:'2026-02-14'},
+{id:207,type:'income',cat:'other',desc:'Alicia Law 转账',amt:1314.52,date:'2026-02-14'},
+{id:208,type:'income',cat:'other',desc:'Alice Law 分账',amt:159.20,date:'2026-02-21'},
+{id:209,type:'income',cat:'other',desc:'Ng Chi Yeh 分账',amt:159.20,date:'2026-02-21'},
+{id:210,type:'income',cat:'other',desc:'Chang Jian Xiang 分账',amt:159.20,date:'2026-02-21'},
+{id:211,type:'income',cat:'other',desc:'CNY 收红包',amt:4000.00,date:'2026-02-22'},
+{id:212,type:'income',cat:'other',desc:'Kelvin Wong 收款',amt:58.60,date:'2026-02-24'},
+{id:213,type:'income',cat:'commission',desc:'佣金 PRO (Feb 26)',amt:142.03,date:'2026-02-27'},
+{id:214,type:'income',cat:'commission',desc:'佣金 PRO (Feb 26)',amt:498.38,date:'2026-02-27'},
+{id:215,type:'income',cat:'other',desc:'Alice Law - MYR换日元',amt:1016.00,date:'2026-02-27'},
+{id:216,type:'income',cat:'other',desc:'Sam Law 转账',amt:1016.00,date:'2026-02-27'},
+// Expenses Feb
+{id:251,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:125.00,date:'2026-02-01'},
+{id:252,type:'expense',cat:'food',desc:'CafeDeli (DPC)',amt:169.90,date:'2026-02-02'},
+{id:253,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:4.11,date:'2026-02-03'},
+{id:254,type:'expense',cat:'food',desc:'Chee Yoong 餐厅',amt:100.40,date:'2026-02-03'},
+{id:255,type:'expense',cat:'other',desc:'Kioskmedia 付款',amt:254.40,date:'2026-02-05'},
+{id:256,type:'expense',cat:'other',desc:'Sue Jiunn Bing 付款',amt:880.00,date:'2026-02-06'},
+{id:257,type:'expense',cat:'other',desc:'EPF 公积金',amt:300.00,date:'2026-02-07'},
+{id:258,type:'expense',cat:'other',desc:'Farihin Mufeed 付款',amt:450.00,date:'2026-02-07'},
+{id:259,type:'expense',cat:'shopping',desc:'SPayLater 还款',amt:449.73,date:'2026-02-07'},
+{id:260,type:'expense',cat:'other',desc:'Telekom 宽频',amt:150.00,date:'2026-02-07'},
+{id:261,type:'expense',cat:'food',desc:'Mido 餐厅',amt:62.30,date:'2026-02-08'},
+{id:262,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:100.00,date:'2026-02-09'},
+{id:263,type:'expense',cat:'other',desc:'ATM 提款',amt:1000.00,date:'2026-02-09'},
+{id:264,type:'expense',cat:'entertainment',desc:'The Hood 酒吧',amt:40.00,date:'2026-02-09'},
+{id:265,type:'expense',cat:'other',desc:'GKash 运动/健身',amt:140.00,date:'2026-02-09'},
+{id:266,type:'expense',cat:'transport',desc:'GrabPay',amt:500.00,date:'2026-02-11'},
+{id:267,type:'expense',cat:'other',desc:'Wise 海外转账',amt:500.00,date:'2026-02-11'},
+{id:268,type:'expense',cat:'entertainment',desc:'CNY Dinner - Swe Shyan Rong',amt:2385.00,date:'2026-02-15'},
+{id:269,type:'expense',cat:'entertainment',desc:'CNY Dinner - Yan Lin Naing',amt:200.00,date:'2026-02-15'},
+{id:270,type:'expense',cat:'other',desc:'MSIG 保险',amt:174.00,date:'2026-02-15'},
+{id:271,type:'expense',cat:'other',desc:'MSIG 保险',amt:174.00,date:'2026-02-15'},
+{id:272,type:'expense',cat:'other',desc:'Vicki Law 付款',amt:270.00,date:'2026-02-16'},
+{id:273,type:'expense',cat:'entertainment',desc:'Brew House (Sam Law)',amt:147.00,date:'2026-02-16'},
+{id:274,type:'expense',cat:'other',desc:'ATM 提款',amt:1500.00,date:'2026-02-16'},
+{id:275,type:'expense',cat:'other',desc:'ATM 提款',amt:1500.00,date:'2026-02-16'},
+{id:276,type:'expense',cat:'other',desc:'ATM 提款',amt:1500.00,date:'2026-02-16'},
+{id:277,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:80.00,date:'2026-02-18'},
+{id:278,type:'expense',cat:'entertainment',desc:'GSC Cinema Paradigm',amt:63.30,date:'2026-02-19'},
+{id:279,type:'expense',cat:'transport',desc:'停车费 - Andari',amt:350.00,date:'2026-02-20'},
+{id:280,type:'expense',cat:'housing',desc:'车贷 (Auto Debit)',amt:1486.83,date:'2026-02-23'},
+{id:281,type:'expense',cat:'other',desc:'Loiteikling 付款',amt:500.00,date:'2026-02-24'},
+{id:282,type:'expense',cat:'food',desc:'Choo Peet Fen 付款',amt:117.60,date:'2026-02-24'},
+{id:283,type:'expense',cat:'other',desc:'ATM 提款',amt:1500.00,date:'2026-02-27'},
+{id:284,type:'expense',cat:'other',desc:'ATM 提款',amt:400.00,date:'2026-02-27'},
+{id:285,type:'expense',cat:'other',desc:'ATM 提款',amt:1500.00,date:'2026-02-27'},
+{id:286,type:'expense',cat:'other',desc:'ATM 提款',amt:500.00,date:'2026-02-27'},
+{id:287,type:'expense',cat:'shopping',desc:'Watsons',amt:52.75,date:'2026-02-27'},
+{id:288,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:120.00,date:'2026-02-27'},
+{id:289,type:'expense',cat:'shopping',desc:'SPayLater 还款',amt:326.46,date:'2026-02-28'},
+{id:290,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:62.77,date:'2026-02-28'},
+
+// ═══ MARCH 2026 ═══
+// Income Mar
+{id:301,type:'income',cat:'commission',desc:'佣金 PRO (Mar 5)',amt:152.08,date:'2026-03-06'},
+{id:302,type:'income',cat:'other',desc:'Alicia Law - Japan 基金',amt:500.00,date:'2026-03-06'},
+{id:303,type:'income',cat:'other',desc:'Alice Law 分账',amt:162.00,date:'2026-03-07'},
+{id:304,type:'income',cat:'other',desc:'Vicki Law DuitNow',amt:324.00,date:'2026-03-07'},
+{id:305,type:'income',cat:'other',desc:'Alice Law 分账',amt:521.00,date:'2026-03-08'},
+{id:306,type:'income',cat:'commission',desc:'佣金 PRO (Mar 12)',amt:189.75,date:'2026-03-13'},
+{id:307,type:'income',cat:'other',desc:'Alicia Law Japan 分账',amt:126.00,date:'2026-03-18'},
+{id:308,type:'income',cat:'other',desc:'Chong Shi Teng 收款',amt:126.00,date:'2026-03-18'},
+{id:309,type:'income',cat:'commission',desc:'佣金 PRO (Mar 27)',amt:276.23,date:'2026-03-27'},
+{id:310,type:'income',cat:'other',desc:'Taipanika 退款 A-12-12',amt:680.00,date:'2026-03-27'},
+{id:311,type:'income',cat:'commission',desc:'佣金 PRO (Mar 27)',amt:5809.45,date:'2026-03-27'},
+// Expenses Mar
+{id:351,type:'expense',cat:'other',desc:'Wise 海外转账',amt:2000.00,date:'2026-03-01'},
+{id:352,type:'expense',cat:'other',desc:'Wong Yoke Fun DuitNow',amt:100.00,date:'2026-03-01'},
+{id:353,type:'expense',cat:'other',desc:'Chang Jian Xiang DuitNow',amt:201.00,date:'2026-03-04'},
+{id:354,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1000.00,date:'2026-03-06'},
+{id:355,type:'expense',cat:'other',desc:'Leong Munly MAE QR',amt:256.90,date:'2026-03-06'},
+{id:356,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1200.00,date:'2026-03-07'},
+{id:357,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1500.00,date:'2026-03-08'},
+{id:358,type:'expense',cat:'other',desc:'Wise 海外转账',amt:1000.00,date:'2026-03-08'},
+{id:359,type:'expense',cat:'other',desc:'Chang Jian Xiang MAE QR',amt:425.00,date:'2026-03-10'},
+{id:360,type:'expense',cat:'housing',desc:'Andari 管理费',amt:200.00,date:'2026-03-11'},
+{id:361,type:'expense',cat:'transport',desc:'停车费 Andari H1G1',amt:250.00,date:'2026-03-14'},
+{id:362,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:100.00,date:'2026-03-16'},
+{id:363,type:'expense',cat:'other',desc:'Leong Kim Yuan DuitNow',amt:280.00,date:'2026-03-17'},
+{id:364,type:'expense',cat:'food',desc:'Jie Di Lia 1 Spicy',amt:57.15,date:'2026-03-17'},
+{id:365,type:'expense',cat:'entertainment',desc:'The Beer Factory SS',amt:134.20,date:'2026-03-18'},
+{id:366,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:14.46,date:'2026-03-19'},
+{id:367,type:'expense',cat:'food',desc:'Mr Wu Menjalara 餐厅',amt:65.65,date:'2026-03-19'},
+{id:368,type:'expense',cat:'food',desc:'Yaukhan Restaurant',amt:34.60,date:'2026-03-20'},
+{id:369,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:40.75,date:'2026-03-20'},
+{id:370,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:60.00,date:'2026-03-20'},
+{id:371,type:'expense',cat:'other',desc:'Darwish Endri DuitNow',amt:46.00,date:'2026-03-20'},
+{id:372,type:'expense',cat:'food',desc:'McDonald\'s Subang Bestari',amt:20.15,date:'2026-03-21'},
+{id:373,type:'expense',cat:'other',desc:'Maxis 宽频',amt:227.45,date:'2026-03-22'},
+{id:374,type:'expense',cat:'other',desc:'Wise 海外转账',amt:300.00,date:'2026-03-22'},
+{id:375,type:'expense',cat:'housing',desc:'车贷 (Auto Debit)',amt:1486.87,date:'2026-03-23'},
+{id:376,type:'expense',cat:'other',desc:'Chang Jian Xiang MAE QR',amt:88.60,date:'2026-03-26'},
+{id:377,type:'expense',cat:'shopping',desc:'SPayLater 还款',amt:808.76,date:'2026-03-27'},
+{id:378,type:'expense',cat:'transport',desc:'KST Car Servicing 维修',amt:187.00,date:'2026-03-28'},
+{id:379,type:'expense',cat:'shopping',desc:'Watsons',amt:95.20,date:'2026-03-28'},
+{id:380,type:'expense',cat:'food',desc:'Staple Dough 面包店',amt:147.30,date:'2026-03-28'},
+{id:381,type:'expense',cat:'other',desc:'Swee Chong Hun DuitNow',amt:275.00,date:'2026-03-30'},
+{id:382,type:'expense',cat:'other',desc:'Wong Yen Ling DuitNow',amt:60.00,date:'2026-03-30'},
+{id:383,type:'expense',cat:'other',desc:'Taipanika A1307 订金',amt:34.00,date:'2026-03-30'},
+{id:384,type:'expense',cat:'other',desc:'Daco Petsmart 宠物',amt:234.70,date:'2026-03-31'},
+{id:385,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:110.00,date:'2026-03-31'},
+];
+
+function doImport(){
+  const btn = document.getElementById('importBtn');
+  btn.disabled = true;
+  btn.textContent = '导入中…';
+
+  try {
+    // Load existing data
+    let existing = {};
+    try {
+      existing = JSON.parse(localStorage.getItem('fos_data') || '{}');
+    } catch(e){}
+
+    const existingTxns = existing.txns || [];
+    const existingIds = new Set(existingTxns.map(t => t.id));
+
+    // Merge - skip duplicates
+    let added = 0;
+    const newTxns = [...MBB_TXNS].reverse(); // oldest first, then prepend
+    for(const t of newTxns){
+      if(!existingIds.has(t.id)){
+        existingTxns.unshift(t);
+        added++;
+      }
+    }
+
+    // Sort by date descending
+    existingTxns.sort((a,b) => b.date.localeCompare(a.date));
+
+    existing.txns = existingTxns;
+
+    // Animate progress
+    let pct = 0;
+    const fill = document.getElementById('fill');
+    const iv = setInterval(()=>{
+      pct = Math.min(pct + 8, 100);
+      fill.style.width = pct + '%';
+      if(pct >= 100) clearInterval(iv);
+    }, 40);
+
+    localStorage.setItem('fos_data', JSON.stringify(existing));
+
+    setTimeout(()=>{
+      document.getElementById('status').innerHTML = `<span class="success">✅ 成功导入 ${added} 笔交易！</span>`;
+      btn.textContent = '✅ 导入完成 — 跳转 App…';
+      setTimeout(goApp, 1500);
+    }, 600);
+
+  } catch(e){
+    document.getElementById('status').innerHTML = `<span class="error">❌ 错误: ${e.message}</span>`;
+    btn.disabled = false;
+    btn.textContent = '重试';
+  }
+}
+
+function goApp(){
+  window.location.href = './';
+}
+</script>
+</body>
+</html>
