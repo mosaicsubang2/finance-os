@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0C0E14">
+<title>财务总结 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0E14;--card:#161B27;--border:rgba(255,255,255,.07);
+  --text:#EFF2FA;--muted:#8A9BBE;--dim:#5B6788;
+  --green:#1FD9A4;--red:#FF6060;--amber:#FFC800;--blue:#5B8FFF;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:16px;padding-bottom:40px}
+h2{font-size:1rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 10px}
+.hero{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px}
+.hero-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 12px;text-align:center}
+.hero-card .label{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.hero-card .value{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums}
+.green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:8px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row-left{display:flex;align-items:center;gap:10px}
+.row-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.row-label{font-size:.85rem;font-weight:600}
+.row-sub{font-size:.72rem;color:var(--dim);margin-top:1px}
+.row-right{text-align:right}
+.row-amt{font-size:.9rem;font-weight:700;font-variant-numeric:tabular-nums}
+.row-pct{font-size:.7rem;color:var(--dim);margin-top:1px}
+.bar-wrap{height:5px;background:rgba(255,255,255,.07);border-radius:3px;margin:2px 0 1px;overflow:hidden;width:80px}
+.bar-fill{height:100%;border-radius:3px}
+/* monthly grid */
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px}
+.month-col{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 6px;text-align:center}
+.month-col .mlabel{font-size:.6rem;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.month-col .mini-bar{height:50px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;margin-bottom:4px}
+.mb-green,.mb-red{border-radius:3px;min-height:2px}
+.mb-green{background:var(--green)}
+.mb-red{background:var(--red)}
+.month-col .mnet{font-size:.62rem;font-weight:700;font-variant-numeric:tabular-nums}
+/* top txn */
+.txn-row{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.txn-row:last-child{border-bottom:none}
+.txn-desc{font-size:.8rem;font-weight:600;max-width:200px}
+.txn-meta{font-size:.68rem;color:var(--dim);margin-top:2px}
+.txn-amt{font-size:.85rem;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{display:inline-block;font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
+.chip-g{background:rgba(31,217,164,.12);color:var(--green)}
+.chip-r{background:rgba(255,96,96,.12);color:var(--red)}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:.9rem}
+.tag{display:inline-block;background:rgba(91,143,255,.12);color:var(--blue);font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:8px;margin-top:3px}
+</style>
+</head>
+<body>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-top:8px">
+  <div>
+    <div style="font-size:1.3rem;font-weight:800">💰 财务总结</div>
+    <div style="font-size:.75rem;color:var(--muted);margin-top:2px">Jan – Jul 2026</div>
+  </div>
+  <button onclick="location.href='./'" style="background:rgba(255,255,255,.07);border:none;color:var(--muted);font-size:.8rem;padding:7px 14px;border-radius:10px;cursor:pointer">← App</button>
+</div>
+
+<div id="root"><div class="empty">加载中…</div></div>
+
+<script>
+const CAT_META = {
+  commission: {label:'佣金收入',icon:'🏠',color:'#1FD9A4'},
+  other:      {label:'其他收支',icon:'💸',color:'#5B8FFF'},
+  ads:        {label:'Facebook Ads',icon:'📣',color:'#FF6060'},
+  transport:  {label:'交通 / 油费',icon:'🚗',color:'#FFC800'},
+  housing:    {label:'车贷 / 管理费',icon:'🏢',color:'#FF8C42'},
+  food:       {label:'餐饮',icon:'🍜',color:'#E879F9'},
+  shopping:   {label:'购物',icon:'🛍',color:'#38BDF8'},
+  entertainment:{label:'娱乐',icon:'🎉',color:'#FB7185'},
+};
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+const MONTH_KEY = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07'];
+
+function fmt(n){ return 'RM '+n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtK(n){ return n>=1000?'RM '+(n/1000).toFixed(1)+'k':'RM '+n.toFixed(0); }
+
+function build(){
+  let data={};
+  try{ data=JSON.parse(localStorage.getItem('fos_data')||'{}'); }catch(e){}
+  const txns = data.txns || [];
+
+  if(!txns.length){
+    document.getElementById('root').innerHTML='<div class="empty">⚠️ 没有交易记录<br><small>请先运行 import1/2/3 导入数据</small></div>';
+    return;
+  }
+
+  let totalIn=0, totalOut=0;
+  const byCat={};   // expenses
+  const byInCat={}; // income
+  const byMonth={};
+  const topExp=[], topInc=[];
+
+  MONTH_KEY.forEach(m=>{ byMonth[m]={in:0,out:0}; });
+
+  txns.forEach(t=>{
+    const mk = t.date?t.date.slice(0,7):null;
+    const isKnownMonth = mk && byMonth[mk]!==undefined;
+
+    if(t.type==='income'){
+      totalIn+=t.amt;
+      byInCat[t.cat]=(byInCat[t.cat]||0)+t.amt;
+      if(isKnownMonth) byMonth[mk].in+=t.amt;
+      topInc.push(t);
+    } else {
+      totalOut+=t.amt;
+      byCat[t.cat]=(byCat[t.cat]||0)+t.amt;
+      if(isKnownMonth) byMonth[mk].out+=t.amt;
+      topExp.push(t);
+    }
+  });
+
+  const net = totalIn-totalOut;
+
+  // sort top lists
+  topExp.sort((a,b)=>b.amt-a.amt);
+  topInc.sort((a,b)=>b.amt-a.amt);
+
+  // build expense rows sorted by amount
+  const catRows = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const maxCat = catRows[0]?catRows[0][1]:1;
+
+  // build income cat rows
+  const inCatRows = Object.entries(byInCat).sort((a,b)=>b[1]-a[1]);
+
+  // max for bar scaling
+  const maxMonthVal = Math.max(...Object.values(byMonth).map(m=>Math.max(m.in,m.out)),1);
+
+  let html = '';
+
+  // ─── HERO ───
+  html += `<div class="hero">
+    <div class="hero-card"><div class="label">总收入</div><div class="value green">${fmtK(totalIn)}</div></div>
+    <div class="hero-card"><div class="label">总支出</div><div class="value red">${fmtK(totalOut)}</div></div>
+    <div class="hero-card"><div class="label">净余</div><div class="value ${net>=0?'green':'red'}">${fmtK(Math.abs(net))}${net<0?' 🔴':''}</div></div>
+  </div>`;
+
+  // ─── MONTHLY ───
+  html += '<h2>每月收支</h2><div class="month-grid">';
+  MONTH_KEY.forEach((mk,i)=>{
+    const m=byMonth[mk];
+    const inH=Math.round((m.in/maxMonthVal)*46);
+    const outH=Math.round((m.out/maxMonthVal)*46);
+    const mnet=m.in-m.out;
+    html+=`<div class="month-col">
+      <div class="mlabel">${MONTHS[i]}</div>
+      <div class="mini-bar">
+        <div class="mb-green" style="height:${inH}px" title="收入"></div>
+        <div class="mb-red" style="height:${outH}px" title="支出"></div>
+      </div>
+      <div class="mnet ${mnet>=0?'green':'red'}">${mnet>=0?'+':''}${fmtK(Math.abs(mnet))}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // ─── INCOME DETAIL ───
+  html += '<h2>💰 收入明细 <span style="font-weight:400;font-size:.75rem;color:var(--muted)">按类别</span></h2><div class="section">';
+  inCatRows.forEach(([cat,amt])=>{
+    const m = CAT_META[cat]||{label:cat,icon:'💰',color:'#8A9BBE'};
+    const pct = Math.round(amt/totalIn*100);
+    html+=`<div class="row">
+      <div class="row-left">
+        <div class="row-icon" style="background:${m.color}22">${m.icon}</div>
+        <div><div class="row-label">${m.label}</div><div class="row-sub">${pct}% 总收入</div></div>
+      </div>
+      <div class="row-right">
+        <div class="row-amt green">${fmt(amt)}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${m.color}"></div></div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // ─── EXPENSES BY CAT ───
+  html += '<h2>💸 支出明细 <span style="font-weight:400;font-size:.75rem;color:var(--muted)">按类别</span></h2><div class="section">';
+  catRows.forEach(([cat,amt])=>{
+    const m = CAT_META[cat]||{label:cat,icon:'💸',color:'#8A9BBE'};
+    const pct = Math.round(amt/totalOut*100);
+    const barW = Math.round(amt/maxCat*100);
+    html+=`<div class="row">
+      <div class="row-left">
+        <div class="row-icon" style="background:${m.color}22">${m.icon}</div>
+        <div><div class="row-label">${m.label}</div><div class="row-sub">${pct}% 总支出</div></div>
+      </div>
+      <div class="row-right">
+        <div class="row-amt red">${fmt(amt)}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${barW}%;background:${m.color}"></div></div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // ─── TOP 15 EXPENSES ───
+  html += '<h2>🔥 最大单笔支出 Top 15</h2><div class="section">';
+  topExp.slice(0,15).forEach(t=>{
+    const m = CAT_META[t.cat]||{label:t.cat};
+    html+=`<div class="txn-row">
+      <div><div class="txn-desc">${t.desc}</div><div class="txn-meta">${t.date} <span class="tag">${m.label}</span></div></div>
+      <div class="txn-amt red">-${fmt(t.amt)}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // ─── TOP 10 INCOME ───
+  html += '<h2>⭐ 最大单笔收入 Top 10</h2><div class="section">';
+  topInc.slice(0,10).forEach(t=>{
+    const m = CAT_META[t.cat]||{label:t.cat};
+    html+=`<div class="txn-row">
+      <div><div class="txn-desc">${t.desc}</div><div class="txn-meta">${t.date} <span class="tag">${m.label}</span></div></div>
+      <div class="txn-amt green">+${fmt(t.amt)}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // ─── STATS ───
+  html += '<h2>📊 快速统计</h2><div class="section">';
+  const avgMonthIn = totalIn/7, avgMonthOut = totalOut/7;
+  const totalAds = byCat['ads']||0;
+  const totalWise = txns.filter(t=>t.desc&&t.desc.includes('Wise')).reduce((s,t)=>s+t.amt,0);
+  const totalFood = byCat['food']||0;
+  const totalTransport = byCat['transport']||0;
+  const totalCarLoan = txns.filter(t=>t.desc&&t.desc.includes('车贷')).reduce((s,t)=>s+t.amt,0);
+  const txnCount = txns.length;
+
+  const stats=[
+    ['📝 总交易笔数',`${txnCount} 笔`,''],
+    ['📅 月均收入',fmt(avgMonthIn),'green'],
+    ['📅 月均支出',fmt(avgMonthOut),'red'],
+    ['📣 FB Ads 总花费',fmt(totalAds),'red'],
+    ['🌏 Wise 海外转账',fmt(totalWise),'red'],
+    ['🚗 车贷 (7个月)',fmt(totalCarLoan),'red'],
+    ['🍜 餐饮总花费',fmt(totalFood),'red'],
+    ['🚗 交通总花费',fmt(totalTransport),'red'],
+  ];
+  stats.forEach(([label,val,cls])=>{
+    html+=`<div class="row"><div class="row-label" style="color:var(--muted)">${label}</div><div class="row-amt ${cls}">${val}</div></div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('root').innerHTML = html;
+}
+
+build();
+</script>
+</body>
+</html>
