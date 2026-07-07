@@ -13,730 +13,773 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0C0E14;
-  --card:#161B27;
-  --card2:#1D2336;
-  --mint:#1FD9A4;
-  --coral:#FF6060;
-  --gold:#F5C842;
-  --lav:#9B8FFF;
-  --text:#EFF2FA;
-  --sub:#8A9BBE;
-  --muted:#5B6788;
-  --border:rgba(255,255,255,0.06);
-  --safe-top:env(safe-area-inset-top);
-  --safe-bot:env(safe-area-inset-bottom);
+  --bg:#0C0E14;--card:#161B27;--card2:#1D2336;
+  --mint:#1FD9A4;--coral:#FF6060;--gold:#F5C842;--lav:#9B8FFF;
+  --text:#EFF2FA;--sub:#8A9BBE;--muted:#5B6788;
+  --border:rgba(255,255,255,0.07);
+  --safe-top:env(safe-area-inset-top);--safe-bot:env(safe-area-inset-bottom);
 }
-html{height:100%;background:var(--bg)}
-body{
-  height:100%;min-height:100dvh;
-  background:var(--bg);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;
-  -webkit-font-smoothing:antialiased;
-  color:var(--text);
-  overflow:hidden;
-  display:flex;flex-direction:column;
-}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;-webkit-font-smoothing:antialiased;color:var(--text);overflow:hidden;display:flex;flex-direction:column}
 
-/* ── Pages ── */
+/* pages */
 .page{display:none;flex-direction:column;flex:1;overflow:hidden}
 .page.active{display:flex}
-
-/* ── Scroll area ── */
-.scroll{
-  flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:0 16px 24px;
-  padding-top:calc(var(--safe-top) + 16px);
-  -webkit-overflow-scrolling:touch;
-}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 16px 20px;padding-top:calc(var(--safe-top) + 12px);-webkit-overflow-scrolling:touch}
 .scroll::-webkit-scrollbar{display:none}
 
-/* ── Status / header ── */
-.page-header{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:18px;
-}
-.page-header h1{font-size:1.5rem;font-weight:700;letter-spacing:-.5px}
-.avatar{
-  width:38px;height:38px;border-radius:12px;
-  background:linear-gradient(135deg,var(--mint),#0FA88A);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;font-weight:700;color:#000;flex-shrink:0;
-}
+/* section */
+.sec-label{font-size:.66rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:18px 0 9px}
+.page-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.page-hd h1{font-size:1.4rem;font-weight:700;letter-spacing:-.4px}
 
-/* ── Cards ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:20px}
-.section-label{
-  font-size:.68rem;font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);margin:20px 0 10px;
-}
+/* balance card */
+.bal-card{background:linear-gradient(145deg,#1D2748,#131929);border:1px solid var(--border);border-radius:24px;padding:22px 20px 18px;position:relative;overflow:hidden;margin-bottom:12px}
+.bal-card::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(31,217,164,.1) 0%,transparent 70%);pointer-events:none}
+.eyebrow{font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.big-num{font-size:2.45rem;font-weight:700;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1.05;cursor:pointer}
+.big-num .cur{font-size:1.2rem;font-weight:500;color:var(--sub);margin-right:2px}
+.bal-row{display:flex;gap:9px;margin-top:13px}
+.bal-pill{flex:1;background:rgba(255,255,255,.05);border-radius:13px;padding:10px 13px;cursor:pointer}
+.bal-pill .lbl{font-size:.65rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.bal-pill .val{font-size:.98rem;font-weight:700;font-variant-numeric:tabular-nums}
+.bal-pill.inc .val{color:var(--mint)}.bal-pill.exp .val{color:var(--coral)}
+.net-change{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-size:.78rem;font-weight:600;background:rgba(31,217,164,.1);color:var(--mint);padding:3px 10px;border-radius:20px}
 
-/* ── Balance card ── */
-.balance-card{
-  background:linear-gradient(145deg,#1D2748 0%,#131929 100%);
-  border:1px solid var(--border);border-radius:24px;
-  padding:24px 22px 20px;position:relative;overflow:hidden;margin-bottom:14px;
-}
-.balance-card::before{
-  content:'';position:absolute;right:-40px;top:-40px;
-  width:200px;height:200px;
-  background:radial-gradient(circle,rgba(31,217,164,.1) 0%,transparent 70%);
-  pointer-events:none;
-}
-.balance-card .eyebrow{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.big-num{font-size:2.6rem;font-weight:700;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1.05}
-.big-num .currency{font-size:1.3rem;font-weight:500;color:var(--sub);margin-right:2px}
-.delta{
-  display:inline-flex;align-items:center;gap:4px;
-  margin-top:10px;font-size:.8rem;font-weight:600;
-  background:rgba(31,217,164,.12);color:var(--mint);
-  padding:3px 10px;border-radius:20px;
-}
-.bal-row{display:flex;gap:10px;margin-top:14px}
-.bal-pill{flex:1;background:rgba(255,255,255,.05);border-radius:14px;padding:11px 14px}
-.bal-pill .lbl{font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.bal-pill .val{font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums}
-.bal-pill.inc .val{color:var(--mint)}
-.bal-pill.exp .val{color:var(--coral)}
-
-/* ── Quick actions ── */
+/* quick actions */
 .qa-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.qa-btn{
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  background:var(--card);border:1px solid var(--border);border-radius:16px;
-  padding:13px 6px;cursor:pointer;-webkit-tap-highlight-color:transparent;
-  transition:transform .1s,background .15s;
-  border:none;outline:none;
-}
-.qa-btn:active{transform:scale(.95);background:var(--card2)}
-.qa-btn .ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
-.qa-btn .lbl{font-size:.65rem;font-weight:600;color:var(--sub);text-align:center;line-height:1.2}
+.qa-btn{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:15px;padding:12px 5px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s;border:none;outline:none}
+.qa-btn:active{transform:scale(.94)}
+.qa-ico{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.qa-lbl{font-size:.62rem;font-weight:600;color:var(--sub);text-align:center;line-height:1.2}
 
-/* ── Ring ── */
-.ring-card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:18px 18px;display:flex;align-items:center;gap:16px;
-}
-.ring-wrap{position:relative;width:78px;height:78px;flex-shrink:0}
-.ring-wrap svg{transform:rotate(-90deg)}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-center .pct{font-size:1.1rem;font-weight:700;color:var(--text);line-height:1}
-.ring-center .sub{font-size:.58rem;color:var(--muted);margin-top:1px}
-.ring-info h3{font-size:.92rem;font-weight:600;margin-bottom:3px}
-.ring-info p{font-size:.78rem;color:var(--sub)}
-.ring-info .rem{font-size:.88rem;font-weight:600;color:var(--mint);margin-top:5px}
+/* fixed expenses */
+.fixed-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.fixed-row{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--border)}
+.fixed-row:last-child{border-bottom:none}
+.fixed-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.fixed-info{flex:1;min-width:0}
+.fixed-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.fixed-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.fixed-amt{font-size:.92rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--coral);cursor:pointer;padding:4px 8px;border-radius:8px;transition:background .15s;text-align:right;white-space:nowrap}
+.fixed-amt:active{background:rgba(255,255,255,.07)}
+.fixed-total{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;background:rgba(255,96,96,.06);border-top:1px solid rgba(255,96,96,.12)}
+.fixed-total .lbl{font-size:.78rem;font-weight:600;color:var(--sub)}
+.fixed-total .val{font-size:1rem;font-weight:700;color:var(--coral);font-variant-numeric:tabular-nums}
 
-/* ── Budget bars ── */
-.budget-list{display:flex;flex-direction:column;gap:9px}
-.budget-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 15px}
-.budget-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.budget-name{display:flex;align-items:center;gap:8px;font-size:.86rem;font-weight:600}
-.bico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.88rem}
-.budget-nums{font-size:.78rem;color:var(--sub);font-variant-numeric:tabular-nums}
-.budget-nums strong{color:var(--text)}
-.bar-track{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px}
-.over{font-size:.68rem;color:var(--coral);margin-top:5px}
-
-/* ── Sparkline ── */
-.spark-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px 16px 14px;overflow:hidden}
-.spark-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.spark-head h3{font-size:.9rem;font-weight:600}
-.spark-head .period{font-size:.7rem;background:rgba(255,255,255,.06);border-radius:20px;padding:3px 10px;color:var(--sub)}
-canvas{display:block;width:100%}
-.spark-legend{display:flex;gap:16px;margin-top:10px}
-.spark-legend span{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--sub)}
-.spark-legend .dot{width:10px;height:3px;border-radius:2px}
-
-/* ── Goals ── */
-.goal-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin:0 -16px;padding:0 16px 6px}
-.goal-scroll::-webkit-scrollbar{display:none}
-.goal-card{
-  flex-shrink:0;width:138px;
-  background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;
-}
-.goal-card .gico{font-size:1.25rem;margin-bottom:7px}
-.goal-card .gname{font-size:.78rem;font-weight:600;margin-bottom:4px}
-.goal-card .gpct{font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums}
-.goal-card .gbar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:6px;overflow:hidden}
-.goal-card .gfill{height:100%;border-radius:2px}
-.goal-card .gsub{font-size:.67rem;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
-
-/* ── Transactions ── */
+/* transactions */
 .tx-list{display:flex;flex-direction:column;gap:2px}
-.tx-item{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 14px;background:var(--card);border-radius:14px;
-  border:1px solid transparent;
-  -webkit-tap-highlight-color:transparent;cursor:pointer;
-}
+.tx-item{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--card);border-radius:13px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .tx-item:active{background:var(--card2)}
-.tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.tx-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
 .tx-info{flex:1;min-width:0}
-.tx-info .name{font-size:.86rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tx-info .cat{font-size:.72rem;color:var(--muted);margin-top:2px}
-.tx-right{text-align:right;flex-shrink:0}
-.tx-amt{font-size:.93rem;font-weight:700;font-variant-numeric:tabular-nums}
-.tx-amt.neg{color:var(--coral)}
-.tx-amt.pos{color:var(--mint)}
-.tx-date{font-size:.67rem;color:var(--muted);margin-top:2px}
+.tx-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-cat{font-size:.7rem;color:var(--muted);margin-top:2px}
+.tx-amt{font-size:.9rem;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.tx-amt.pos{color:var(--mint)}.tx-amt.neg{color:var(--coral)}
+.tx-date{font-size:.65rem;color:var(--muted);margin-top:2px;text-align:right}
+.tx-group-lbl{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:13px 0 7px}
+.no-tx{text-align:center;color:var(--muted);font-size:.85rem;padding:40px 0}
 
-/* ── Add expense modal ── */
-.modal-backdrop{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.6);z-index:100;
-  align-items:flex-end;justify-content:center;
+/* search */
+.search-bar{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:9px 13px;margin-bottom:12px}
+.search-bar input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.88rem;font-family:inherit}
+.fchips{display:flex;gap:7px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+.fchips::-webkit-scrollbar{display:none}
+.fchip{flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:.72rem;font-weight:600;background:var(--card);border:1px solid var(--border);color:var(--sub);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fchip.on{background:rgba(31,217,164,.1);border-color:var(--mint);color:var(--mint)}
+
+/* goals */
+.goal-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:9px}
+.goal-hd{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+.goal-ico{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.goal-name{font-size:.9rem;font-weight:700}
+.goal-target{font-size:.75rem;color:var(--sub);margin-top:2px;font-variant-numeric:tabular-nums;cursor:pointer}
+.goal-prog{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.goal-pct{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums}
+.goal-saved{font-size:.78rem;color:var(--sub);cursor:pointer}
+.gbar{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.gfill{height:100%;border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.goal-ft{display:flex;justify-content:space-between;margin-top:8px;font-size:.7rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.add-btn{width:100%;background:rgba(31,217,164,.07);border:1.5px dashed rgba(31,217,164,.25);border-radius:18px;padding:16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--mint);font-size:.86rem;font-weight:600;margin-top:8px;-webkit-tap-highlight-color:transparent}
+
+/* profile */
+.prof-hero{background:linear-gradient(145deg,#1D2748,#131929);border:1px solid var(--border);border-radius:22px;padding:22px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.prof-av{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--mint),#0FA88A);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#000;flex-shrink:0}
+.prof-info h2{font-size:1.05rem;font-weight:700}
+.prof-info p{font-size:.78rem;color:var(--sub);margin-top:2px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px}
+.stat-c{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:13px;text-align:center}
+.stat-v{font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.stat-l{font-size:.63rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.menu-list{display:flex;flex-direction:column;gap:2px}
+.menu-item{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.menu-item:active{background:var(--card2)}
+.mico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.mtxt{flex:1;font-size:.86rem;font-weight:600}
+.marr{color:var(--muted)}
+
+/* ── RESET btn ── */
+.reset-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(255,96,96,.07);border:1.5px solid rgba(255,96,96,.2);
+  border-radius:16px;padding:14px;margin-top:10px;
+  cursor:pointer;color:var(--coral);font-size:.88rem;font-weight:700;
+  -webkit-tap-highlight-color:transparent;
 }
-.modal-backdrop.open{display:flex}
-.modal{
-  width:100%;max-width:430px;
-  background:#1A2035;border-radius:28px 28px 0 0;
-  padding:16px 20px calc(var(--safe-bot) + 20px);
-}
-.modal-handle{width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 18px}
-.modal h2{font-size:1.1rem;font-weight:700;margin-bottom:20px}
-.field{margin-bottom:14px}
-.field label{font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
-.field input,.field select{
-  width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);
-  border-radius:12px;padding:12px 14px;color:var(--text);font-size:.95rem;
-  font-family:inherit;outline:none;-webkit-appearance:none;
-}
+.reset-btn:active{background:rgba(255,96,96,.15)}
+
+/* tab bar */
+.tabbar{flex-shrink:0;display:flex;align-items:flex-start;padding-top:10px;padding-bottom:calc(var(--safe-bot) + 6px);background:rgba(10,12,18,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:2px;-webkit-tap-highlight-color:transparent}
+.tsvg{transition:opacity .2s}
+.tab .off{opacity:.32}.tab .on{opacity:0;position:absolute}
+.tab.active .off{opacity:0}.tab.active .on{opacity:1;position:static}
+.tlbl{font-size:.6rem;font-weight:600;color:var(--muted);transition:color .2s}
+.tab.active .tlbl{color:var(--mint)}
+.tdot{width:4px;height:4px;border-radius:2px;background:var(--mint);opacity:0;margin-top:1px;transition:opacity .2s}
+.tab.active .tdot{opacity:1}
+
+/* ── Universal modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{width:100%;max-width:430px;background:#1A2035;border-radius:26px 26px 0 0;padding:14px 20px calc(var(--safe-bot) + 22px)}
+.modal-handle{width:34px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:0 auto 16px}
+.modal h2{font-size:1.05rem;font-weight:700;margin-bottom:18px}
+.field{margin-bottom:13px}
+.field label{font-size:.69rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+.field input,.field select{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-size:.93rem;font-family:inherit;outline:none;-webkit-appearance:none}
 .field input:focus,.field select:focus{border-color:var(--mint)}
 .field select option{background:#1A2035}
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
-.cat-chip{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  background:rgba(255,255,255,.05);border:1.5px solid transparent;
-  border-radius:12px;padding:10px 4px;cursor:pointer;
-  font-size:.65rem;font-weight:600;color:var(--sub);
-  -webkit-tap-highlight-color:transparent;transition:all .15s;
-}
-.cat-chip .e{font-size:1.1rem}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:5px}
+.cat-chip{display:flex;flex-direction:column;align-items:center;gap:3px;background:rgba(255,255,255,.05);border:1.5px solid transparent;border-radius:11px;padding:9px 4px;cursor:pointer;font-size:.62rem;font-weight:600;color:var(--sub);-webkit-tap-highlight-color:transparent;transition:all .15s}
+.cat-chip .e{font-size:1rem}
 .cat-chip.sel{border-color:var(--mint);background:rgba(31,217,164,.08);color:var(--mint)}
-.btn-primary{
-  width:100%;background:var(--mint);color:#000;font-size:1rem;font-weight:700;
-  border:none;border-radius:16px;padding:15px;cursor:pointer;margin-top:8px;
-  font-family:inherit;-webkit-tap-highlight-color:transparent;
-  transition:opacity .15s;
-}
-.btn-primary:active{opacity:.85}
+.btn-save{width:100%;background:var(--mint);color:#000;font-size:.95rem;font-weight:700;border:none;border-radius:14px;padding:14px;cursor:pointer;margin-top:8px;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.btn-save:active{opacity:.85}
+.btn-del{width:100%;background:rgba(255,96,96,.1);color:var(--coral);font-size:.88rem;font-weight:600;border:none;border-radius:14px;padding:12px;cursor:pointer;margin-top:6px;font-family:inherit}
+.btn-del:active{background:rgba(255,96,96,.2)}
+.modal-row{display:flex;gap:8px}
+.modal-row .field{flex:1}
 
-/* ── Tab bar ── */
-.tabbar{
-  flex-shrink:0;
-  display:flex;align-items:flex-start;padding-top:10px;
-  padding-bottom:calc(var(--safe-bot) + 6px);
-  background:rgba(12,14,20,.9);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:2px;-webkit-tap-highlight-color:transparent}
-.tab svg{transition:opacity .2s}
-.tab svg.off{opacity:.35}
-.tab svg.on{opacity:0;position:absolute}
-.tab.active svg.off{opacity:0}
-.tab.active svg.on{opacity:1;position:static}
-.tlbl{font-size:.62rem;font-weight:600;letter-spacing:.02em;color:var(--muted);transition:color .2s}
-.tab.active .tlbl{color:var(--mint)}
-.tab-dot{width:4px;height:4px;border-radius:2px;background:var(--mint);opacity:0;margin-top:1px;transition:opacity .2s}
-.tab.active .tab-dot{opacity:1}
+/* confirm dialog */
+.confirm-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:20px}
+.confirm-bg.open{display:flex}
+.confirm-box{background:#1D2336;border-radius:20px;padding:24px 22px;width:100%;max-width:320px;text-align:center}
+.confirm-box h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.confirm-box p{font-size:.82rem;color:var(--sub);margin-bottom:20px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-btns button{flex:1;padding:12px;border-radius:13px;border:none;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-cancel{background:rgba(255,255,255,.07);color:var(--sub)}
+.btn-confirm{background:var(--coral);color:#fff}
 
-/* ── Transactions page ── */
-.search-bar{
-  display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 14px;
-  margin-bottom:14px;
-}
-.search-bar input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.9rem;font-family:inherit}
-.filter-chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}
-.filter-chips::-webkit-scrollbar{display:none}
-.fchip{
-  flex-shrink:0;padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:600;
-  background:var(--card);border:1px solid var(--border);color:var(--sub);cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.fchip.active{background:rgba(31,217,164,.12);border-color:var(--mint);color:var(--mint)}
-.tx-group-label{font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+/* toast */
+.toast{position:fixed;bottom:calc(var(--tab-h,82px) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:#222B3E;border:1px solid var(--border);border-radius:20px;padding:10px 20px;font-size:.82rem;font-weight:600;color:var(--text);opacity:0;transition:all .3s;pointer-events:none;z-index:400;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── Goals page ── */
-.goal-full{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:10px}
-.goal-full-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.goal-full-head .gico2{font-size:1.5rem;width:46px;height:46px;background:rgba(255,255,255,.05);border-radius:14px;display:flex;align-items:center;justify-content:center}
-.goal-full-head .ginfo .gname2{font-size:.95rem;font-weight:700}
-.goal-full-head .ginfo .gsub2{font-size:.78rem;color:var(--sub);margin-top:2px;font-variant-numeric:tabular-nums}
-.goal-prog{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.goal-prog .gpct2{font-size:1.1rem;font-weight:700;font-variant-numeric:tabular-nums}
-.gbar2{height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
-.gfill2{height:100%;border-radius:4px}
-.goal-footer{display:flex;justify-content:space-between;margin-top:10px}
-.goal-footer span{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.add-goal-btn{
-  width:100%;background:rgba(31,217,164,.08);border:1.5px dashed rgba(31,217,164,.3);
-  border-radius:20px;padding:18px;display:flex;align-items:center;justify-content:center;
-  gap:8px;cursor:pointer;color:var(--mint);font-size:.88rem;font-weight:600;margin-top:10px;
-  -webkit-tap-highlight-color:transparent;
-}
+/* summary donut on home */
+.summary-row{display:flex;gap:9px}
+.summary-half{flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 14px}
+.summary-half .slbl{font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.summary-half .sval{font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums}
 
-/* ── Profile page ── */
-.profile-hero{
-  background:linear-gradient(145deg,#1D2748,#131929);
-  border:1px solid var(--border);border-radius:24px;padding:24px;
-  display:flex;align-items:center;gap:16px;margin-bottom:18px;
-}
-.profile-avatar{
-  width:64px;height:64px;border-radius:18px;
-  background:linear-gradient(135deg,var(--mint),#0FA88A);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.6rem;font-weight:700;color:#000;flex-shrink:0;
-}
-.profile-info h2{font-size:1.1rem;font-weight:700;margin-bottom:3px}
-.profile-info p{font-size:.8rem;color:var(--sub)}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center}
-.stat-card .sv{font-size:1.1rem;font-weight:700;font-variant-numeric:tabular-nums;margin-bottom:2px}
-.stat-card .sl{font-size:.65rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-.menu-list{display:flex;flex-direction:column;gap:2px}
-.menu-item{
-  display:flex;align-items:center;gap:12px;
-  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-.menu-item:active{background:var(--card2)}
-.menu-item .mico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
-.menu-item .mtext{flex:1;font-size:.88rem;font-weight:600}
-.menu-item .marr{color:var(--muted);font-size:.8rem}
+/* income section on home */
+.income-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.income-row{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.income-row:last-child{border-bottom:none}
+.income-total{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(31,217,164,.05);border-top:1px solid rgba(31,217,164,.1)}
+.income-total .lbl{font-size:.78rem;font-weight:600;color:var(--sub)}
+.income-total .val{font-size:1rem;font-weight:700;color:var(--mint);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 
-<!-- ══════ PAGE: HOME ══════ -->
+<!-- ══ PAGE HOME ══ -->
 <div class="page active" id="page-home">
-  <div class="scroll">
-    <div class="page-header">
-      <div>
-        <div style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)" id="month-label"></div>
-        <div style="font-size:1.05rem;font-weight:700;margin-top:2px" id="greeting"></div>
-      </div>
-      <div class="avatar">F</div>
+<div class="scroll">
+  <div class="page-hd">
+    <div>
+      <div style="font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)" id="month-lbl"></div>
+      <div style="font-size:1rem;font-weight:700;margin-top:2px">Hi Felix 👋</div>
     </div>
-
-    <!-- Balance -->
-    <div class="balance-card">
-      <div class="eyebrow">总净资产</div>
-      <div class="big-num"><span class="currency">RM</span><span id="net-worth">142,830</span></div>
-      <div class="delta">
-        <svg width="10" height="10" viewBox="0 0 10 10"><path d="M5 1L9 5H6V9H4V5H1L5 1Z" fill="#1FD9A4"/></svg>
-        +RM 3,240 本月
-      </div>
-      <div class="bal-row">
-        <div class="bal-pill inc"><div class="lbl">收入</div><div class="val">RM 8,500</div></div>
-        <div class="bal-pill exp"><div class="lbl">支出</div><div class="val">RM 5,260</div></div>
-      </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="section-label">快速操作</div>
-    <div class="qa-row">
-      <button class="qa-btn" onclick="openModal('expense')">
-        <div class="ico" style="background:rgba(255,96,96,.12)">➖</div>
-        <div class="lbl">记支出</div>
-      </button>
-      <button class="qa-btn" onclick="openModal('income')">
-        <div class="ico" style="background:rgba(31,217,164,.12)">➕</div>
-        <div class="lbl">记收入</div>
-      </button>
-      <button class="qa-btn" onclick="goTab('goals')">
-        <div class="ico" style="background:rgba(155,143,255,.12)">🎯</div>
-        <div class="lbl">目标</div>
-      </button>
-      <button class="qa-btn" onclick="goTab('txn')">
-        <div class="ico" style="background:rgba(245,200,66,.12)">📋</div>
-        <div class="lbl">记录</div>
-      </button>
-    </div>
-
-    <!-- Budget ring -->
-    <div class="section-label">本月预算</div>
-    <div class="ring-card">
-      <div class="ring-wrap">
-        <svg width="78" height="78" viewBox="0 0 78 78">
-          <circle cx="39" cy="39" r="31" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7.5"/>
-          <circle cx="39" cy="39" r="31" fill="none" stroke="url(#rg)" stroke-width="7.5"
-            stroke-dasharray="194.8" stroke-dashoffset="70.1" stroke-linecap="round"/>
-          <defs>
-            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#1FD9A4"/><stop offset="100%" stop-color="#0FA88A"/>
-            </linearGradient>
-          </defs>
-        </svg>
-        <div class="ring-center"><div class="pct">64%</div><div class="sub">已用</div></div>
-      </div>
-      <div class="ring-info">
-        <h3>七月消费预算</h3>
-        <p>RM 5,260 / RM 8,200</p>
-        <div class="rem">剩余 RM 2,940</div>
-        <div style="font-size:.7rem;color:var(--muted);margin-top:3px">还有 <span id="days-left"></span> 天</div>
-      </div>
-    </div>
-
-    <!-- Budget cats -->
-    <div class="section-label">分类预算</div>
-    <div class="budget-list">
-      <div class="budget-item">
-        <div class="budget-head"><div class="budget-name"><div class="bico" style="background:rgba(245,200,66,.12)">🍜</div>餐饮</div><div class="budget-nums"><strong>RM 820</strong> / 1,200</div></div>
-        <div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--gold)"></div></div>
-      </div>
-      <div class="budget-item">
-        <div class="budget-head"><div class="budget-name"><div class="bico" style="background:rgba(31,217,164,.12)">🏠</div>住房</div><div class="budget-nums"><strong>RM 1,800</strong> / 1,800</div></div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--mint)"></div></div>
-      </div>
-      <div class="budget-item">
-        <div class="budget-head"><div class="budget-name"><div class="bico" style="background:rgba(255,96,96,.12)">🚗</div>交通</div><div class="budget-nums"><strong>RM 480</strong> / 400</div></div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--coral)"></div></div>
-        <div class="over">⚠ 超出 RM 80</div>
-      </div>
-      <div class="budget-item">
-        <div class="budget-head"><div class="budget-name"><div class="bico" style="background:rgba(155,143,255,.12)">🎉</div>娱乐</div><div class="budget-nums"><strong>RM 210</strong> / 600</div></div>
-        <div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--lav)"></div></div>
-      </div>
-    </div>
-
-    <!-- Chart -->
-    <div class="section-label">收支趋势</div>
-    <div class="spark-card">
-      <div class="spark-head"><h3>近6个月</h3><div class="period">2026 上半年</div></div>
-      <canvas id="chart" height="70"></canvas>
-      <div class="spark-legend">
-        <span><div class="dot" style="background:var(--mint)"></div>收入</span>
-        <span><div class="dot" style="background:var(--coral)"></div>支出</span>
-      </div>
-    </div>
-
-    <!-- Goals preview -->
-    <div class="section-label">储蓄目标</div>
-    <div class="goal-scroll">
-      <div class="goal-card">
-        <div class="gico">🏖️</div><div class="gname">日本旅游</div>
-        <div class="gpct" style="color:var(--mint)">73%</div>
-        <div class="gbar"><div class="gfill" style="width:73%;background:linear-gradient(90deg,var(--mint),#0FA88A)"></div></div>
-        <div class="gsub">RM 7,300 / 10,000</div>
-      </div>
-      <div class="goal-card">
-        <div class="gico">📱</div><div class="gname">新 MacBook</div>
-        <div class="gpct" style="color:var(--lav)">41%</div>
-        <div class="gbar"><div class="gfill" style="width:41%;background:linear-gradient(90deg,var(--lav),#7A6FE8)"></div></div>
-        <div class="gsub">RM 3,280 / 8,000</div>
-      </div>
-      <div class="goal-card">
-        <div class="gico">🏠</div><div class="gname">首付金</div>
-        <div class="gpct" style="color:var(--gold)">18%</div>
-        <div class="gbar"><div class="gfill" style="width:18%;background:linear-gradient(90deg,var(--gold),#E0A800)"></div></div>
-        <div class="gsub">RM 18,000 / 100,000</div>
-      </div>
-    </div>
-
-    <!-- Recent tx -->
-    <div style="display:flex;justify-content:space-between;align-items:center" class="section-label">
-      <span>最近交易</span>
-      <span style="color:var(--mint);font-size:.75rem;cursor:pointer" onclick="goTab('txn')">查看全部</span>
-    </div>
-    <div class="tx-list" id="home-tx"></div>
+    <div style="width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--mint),#0FA88A);display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;color:#000">F</div>
   </div>
+
+  <!-- balance -->
+  <div class="bal-card">
+    <div class="eyebrow">本月净储蓄</div>
+    <div class="big-num" id="net-disp" onclick="editField('net-worth','本月净储蓄 (RM)','number')"><span class="cur">RM </span><span id="net-val">0</span></div>
+    <div class="bal-row">
+      <div class="bal-pill inc" onclick="editField('income','月收入 (RM)','number')">
+        <div class="lbl">月收入</div><div class="val" id="home-inc">RM 0</div>
+      </div>
+      <div class="bal-pill exp" onclick="editField('expense-total','','')">
+        <div class="lbl">固定支出</div><div class="val" id="home-exp">RM 0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- quick actions -->
+  <div class="sec-label">快速操作</div>
+  <div class="qa-row">
+    <button class="qa-btn" onclick="openAddTx('expense')"><div class="qa-ico" style="background:rgba(255,96,96,.12)">➖</div><div class="qa-lbl">记支出</div></button>
+    <button class="qa-btn" onclick="openAddTx('income')"><div class="qa-ico" style="background:rgba(31,217,164,.12)">➕</div><div class="qa-lbl">记收入</div></button>
+    <button class="qa-btn" onclick="goTab('goals')"><div class="qa-ico" style="background:rgba(155,143,255,.12)">🎯</div><div class="qa-lbl">目标</div></button>
+    <button class="qa-btn" onclick="goTab('txn')"><div class="qa-ico" style="background:rgba(245,200,66,.12)">📋</div><div class="qa-lbl">记录</div></button>
+  </div>
+
+  <!-- income sources -->
+  <div class="sec-label">收入来源</div>
+  <div class="income-card" id="income-list"></div>
+
+  <!-- fixed expenses -->
+  <div class="sec-label">固定月支出</div>
+  <div class="fixed-card" id="fixed-list"></div>
+
+  <!-- recent tx -->
+  <div style="display:flex;justify-content:space-between;align-items:center" class="sec-label">
+    <span>最近交易</span>
+    <span style="color:var(--mint);font-size:.73rem;cursor:pointer" onclick="goTab('txn')">全部 ›</span>
+  </div>
+  <div class="tx-list" id="home-tx-list"></div>
+</div>
 </div>
 
-<!-- ══════ PAGE: TRANSACTIONS ══════ -->
+<!-- ══ PAGE TXN ══ -->
 <div class="page" id="page-txn">
-  <div class="scroll">
-    <div class="page-header"><h1>交易记录</h1>
-      <button class="qa-btn" style="width:auto;padding:8px 14px;flex-direction:row;border-radius:12px" onclick="openModal('expense')">
-        <span style="font-size:.8rem;color:var(--mint);font-weight:600">+ 记录</span>
-      </button>
-    </div>
-    <div class="search-bar">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#5B6788" stroke-width="2"/><path d="M20 20L16.5 16.5" stroke="#5B6788" stroke-width="2" stroke-linecap="round"/></svg>
-      <input type="text" placeholder="搜索交易..." id="tx-search">
-    </div>
-    <div class="filter-chips">
-      <div class="fchip active" data-f="all">全部</div>
-      <div class="fchip" data-f="income">收入</div>
-      <div class="fchip" data-f="expense">支出</div>
-      <div class="fchip" data-f="food">餐饮</div>
-      <div class="fchip" data-f="transport">交通</div>
-      <div class="fchip" data-f="shopping">购物</div>
-    </div>
-    <div id="tx-page-list"></div>
+<div class="scroll">
+  <div class="page-hd">
+    <h1>交易记录</h1>
+    <button class="qa-btn" style="width:auto;padding:8px 14px;flex-direction:row;border-radius:12px;gap:5px" onclick="openAddTx('expense')">
+      <span style="font-size:.82rem;color:var(--mint);font-weight:700">＋ 记录</span>
+    </button>
   </div>
+  <div class="search-bar">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#5B6788" stroke-width="2"/><path d="M20 20L16.5 16.5" stroke="#5B6788" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="text" placeholder="搜索…" id="tx-search">
+  </div>
+  <div class="fchips">
+    <div class="fchip on" data-f="all">全部</div>
+    <div class="fchip" data-f="income">收入</div>
+    <div class="fchip" data-f="expense">支出</div>
+    <div class="fchip" data-f="food">餐饮</div>
+    <div class="fchip" data-f="transport">交通</div>
+    <div class="fchip" data-f="shopping">购物</div>
+  </div>
+  <div id="txn-page-list"></div>
+</div>
 </div>
 
-<!-- ══════ PAGE: GOALS ══════ -->
+<!-- ══ PAGE GOALS ══ -->
 <div class="page" id="page-goals">
-  <div class="scroll">
-    <div class="page-header"><h1>储蓄目标</h1></div>
-    <div class="goal-full">
-      <div class="goal-full-head">
-        <div class="gico2">🏖️</div>
-        <div class="ginfo"><div class="gname2">日本旅游</div><div class="gsub2">目标 RM 10,000 · 2026年12月</div></div>
-      </div>
-      <div class="goal-prog"><div class="gpct2" style="color:var(--mint)">73%</div><div style="font-size:.8rem;color:var(--sub)">RM 7,300 已存</div></div>
-      <div class="gbar2"><div class="gfill2" style="width:73%;background:linear-gradient(90deg,var(--mint),#0FA88A)"></div></div>
-      <div class="goal-footer"><span>还需 RM 2,700</span><span>距离目标 178 天</span></div>
-    </div>
-    <div class="goal-full">
-      <div class="goal-full-head">
-        <div class="gico2">📱</div>
-        <div class="ginfo"><div class="gname2">新 MacBook Pro</div><div class="gsub2">目标 RM 8,000 · 2027年3月</div></div>
-      </div>
-      <div class="goal-prog"><div class="gpct2" style="color:var(--lav)">41%</div><div style="font-size:.8rem;color:var(--sub)">RM 3,280 已存</div></div>
-      <div class="gbar2"><div class="gfill2" style="width:41%;background:linear-gradient(90deg,var(--lav),#7A6FE8)"></div></div>
-      <div class="goal-footer"><span>还需 RM 4,720</span><span>距离目标 269 天</span></div>
-    </div>
-    <div class="goal-full">
-      <div class="goal-full-head">
-        <div class="gico2">🏠</div>
-        <div class="ginfo"><div class="gname2">房产首付金</div><div class="gsub2">目标 RM 100,000 · 2028年</div></div>
-      </div>
-      <div class="goal-prog"><div class="gpct2" style="color:var(--gold)">18%</div><div style="font-size:.8rem;color:var(--sub)">RM 18,000 已存</div></div>
-      <div class="gbar2"><div class="gfill2" style="width:18%;background:linear-gradient(90deg,var(--gold),#E0A800)"></div></div>
-      <div class="goal-footer"><span>还需 RM 82,000</span><span>每月需存 RM 3,416</span></div>
-    </div>
-    <div class="add-goal-btn">＋ 添加新目标</div>
-  </div>
+<div class="scroll">
+  <div class="page-hd"><h1>储蓄目标</h1></div>
+  <div id="goals-list"></div>
+  <div class="add-btn" onclick="openAddGoal()">＋ 添加新目标</div>
+</div>
 </div>
 
-<!-- ══════ PAGE: PROFILE ══════ -->
+<!-- ══ PAGE ME ══ -->
 <div class="page" id="page-me">
-  <div class="scroll">
-    <div class="page-header"><h1>我的账户</h1></div>
-    <div class="profile-hero">
-      <div class="profile-avatar">F</div>
-      <div class="profile-info">
-        <h2>Felix</h2>
-        <p>defungky@gmail.com</p>
-        <p style="font-size:.72rem;color:var(--mint);margin-top:3px">个人版 · 免费</p>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="sv" style="color:var(--mint)">RM 8,500</div><div class="sl">月收入</div></div>
-      <div class="stat-card"><div class="sv" style="color:var(--coral)">RM 5,260</div><div class="sl">月支出</div></div>
-      <div class="stat-card"><div class="sv" style="color:var(--gold)">62%</div><div class="sl">储蓄率</div></div>
-    </div>
-    <div class="section-label">设置</div>
-    <div class="menu-list">
-      <div class="menu-item"><div class="mico" style="background:rgba(31,217,164,.1)">💰</div><div class="mtext">预算设置</div><div class="marr">›</div></div>
-      <div class="menu-item"><div class="mico" style="background:rgba(155,143,255,.1)">🔔</div><div class="mtext">通知</div><div class="marr">›</div></div>
-      <div class="menu-item"><div class="mico" style="background:rgba(245,200,66,.1)">💱</div><div class="mtext">货币 · MYR</div><div class="marr">›</div></div>
-      <div class="menu-item"><div class="mico" style="background:rgba(255,96,96,.1)">🔒</div><div class="mtext">隐私与安全</div><div class="marr">›</div></div>
-      <div class="menu-item"><div class="mico" style="background:rgba(91,103,136,.2)">📤</div><div class="mtext">导出数据</div><div class="marr">›</div></div>
+<div class="scroll">
+  <div class="page-hd"><h1>我的账户</h1></div>
+  <div class="prof-hero">
+    <div class="prof-av">F</div>
+    <div class="prof-info">
+      <h2 id="prof-name">Felix</h2>
+      <p>defungky@gmail.com</p>
+      <p style="font-size:.7rem;color:var(--mint);margin-top:3px">个人版 · 免费</p>
     </div>
   </div>
+  <div class="stats-grid">
+    <div class="stat-c"><div class="stat-v" style="color:var(--mint)" id="stat-inc">RM 0</div><div class="stat-l">月收入</div></div>
+    <div class="stat-c"><div class="stat-v" style="color:var(--coral)" id="stat-exp">RM 0</div><div class="stat-l">固定支出</div></div>
+    <div class="stat-c"><div class="stat-v" style="color:var(--gold)" id="stat-save">0%</div><div class="stat-l">储蓄率</div></div>
+  </div>
+  <div class="sec-label">设置</div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="editField('name','你的名字','text')"><div class="mico" style="background:rgba(31,217,164,.1)">✏️</div><div class="mtxt">修改名字</div><div class="marr">›</div></div>
+    <div class="menu-item" onclick="editField('income','月收入 (RM)','number')"><div class="mico" style="background:rgba(245,200,66,.1)">💰</div><div class="mtxt">修改月收入</div><div class="marr">›</div></div>
+    <div class="menu-item" onclick="goTab('home');setTimeout(()=>document.querySelector('.fixed-card').scrollIntoView({behavior:'smooth'}),300)"><div class="mico" style="background:rgba(255,96,96,.1)">📋</div><div class="mtxt">编辑固定支出</div><div class="marr">›</div></div>
+  </div>
+  <div class="sec-label">数据</div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="exportData()"><div class="mico" style="background:rgba(91,103,136,.2)">📤</div><div class="mtxt">导出数据</div><div class="marr">›</div></div>
+  </div>
+  <!-- RESET -->
+  <div class="reset-btn" onclick="confirmReset()">🗑️ 重置所有数据</div>
+  <div style="text-align:center;font-size:.68rem;color:var(--muted);margin-top:12px">重置会清除所有交易记录和个人数据</div>
+</div>
 </div>
 
-<!-- ══════ TAB BAR ══════ -->
+<!-- ══ TAB BAR ══ -->
 <div class="tabbar">
   <div class="tab active" data-page="home">
-    <svg class="off" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9L12 2L21 9V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V9Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
-    <svg class="on" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9L12 2L21 9V20C21 20.5523 20.5523 21 20 21H15V15H9V21H4C3.44772 21 3 20.5523 3 20V9Z" fill="#1FD9A4"/></svg>
-    <div class="tlbl">总览</div><div class="tab-dot"></div>
+    <svg class="tsvg off" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <svg class="tsvg on" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9Z" fill="#1FD9A4"/></svg>
+    <div class="tlbl">总览</div><div class="tdot"></div>
   </div>
   <div class="tab" data-page="txn">
-    <svg class="off" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="white" stroke-width="1.8"/><path d="M3 10H21" stroke="white" stroke-width="1.8"/><circle cx="7" cy="15" r="1" fill="white"/></svg>
-    <svg class="on" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" fill="#1FD9A4"/><path d="M3 10H21" stroke="#0C0E14" stroke-width="1.8"/><circle cx="7" cy="15" r="1" fill="#0C0E14"/></svg>
-    <div class="tlbl">交易</div><div class="tab-dot"></div>
+    <svg class="tsvg off" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="white" stroke-width="1.8"/><path d="M3 10H21" stroke="white" stroke-width="1.8"/><circle cx="7" cy="15" r="1" fill="white"/></svg>
+    <svg class="tsvg on" width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" fill="#1FD9A4"/><path d="M3 10H21" stroke="#0C0E14" stroke-width="1.8"/><circle cx="7" cy="15" r="1" fill="#0C0E14"/></svg>
+    <div class="tlbl">交易</div><div class="tdot"></div>
   </div>
   <div class="tab" data-page="goals">
-    <svg class="off" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12" r="5" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="white"/></svg>
-    <svg class="on" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#1FD9A4" opacity=".3"/><circle cx="12" cy="12" r="5" fill="#1FD9A4" opacity=".6"/><circle cx="12" cy="12" r="2" fill="#1FD9A4"/></svg>
-    <div class="tlbl">目标</div><div class="tab-dot"></div>
+    <svg class="tsvg off" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12" r="5" stroke="white" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="white"/></svg>
+    <svg class="tsvg on" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#1FD9A4" opacity=".25"/><circle cx="12" cy="12" r="5" fill="#1FD9A4" opacity=".6"/><circle cx="12" cy="12" r="2" fill="#1FD9A4"/></svg>
+    <div class="tlbl">目标</div><div class="tdot"></div>
   </div>
   <div class="tab" data-page="me">
-    <svg class="off" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="white" stroke-width="1.8"/><path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <svg class="on" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" fill="#1FD9A4"/><path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="#1FD9A4" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <div class="tlbl">我的</div><div class="tab-dot"></div>
+    <svg class="tsvg off" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" stroke="white" stroke-width="1.8"/><path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <svg class="tsvg on" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5" fill="#1FD9A4"/><path d="M5 20C5 17 8 15 12 15C16 15 19 17 19 20" stroke="#1FD9A4" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="tlbl">我的</div><div class="tdot"></div>
   </div>
 </div>
 
-<!-- ══════ ADD MODAL ══════ -->
-<div class="modal-backdrop" id="modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h2 id="modal-title">记录支出</h2>
-    <div class="field">
-      <label>金额 (RM)</label>
-      <input type="number" inputmode="decimal" placeholder="0.00" id="m-amount">
+<!-- ══ ADD TX MODAL ══ -->
+<div class="modal-bg" id="modal-tx">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <h2 id="modal-tx-title">记录支出</h2>
+  <div class="modal-row">
+    <div class="field"><label>金额 (RM)</label><input type="number" inputmode="decimal" placeholder="0.00" id="m-amt"></div>
+    <div class="field"><label>日期</label><input type="date" id="m-date"></div>
+  </div>
+  <div class="field"><label>描述</label><input type="text" placeholder="说明…" id="m-desc"></div>
+  <div class="field" id="m-cat-field">
+    <label>分类</label>
+    <div class="cat-grid" id="cat-grid">
+      <div class="cat-chip sel" data-cat="food"><div class="e">🍜</div>餐饮</div>
+      <div class="cat-chip" data-cat="transport"><div class="e">🚗</div>交通</div>
+      <div class="cat-chip" data-cat="shopping"><div class="e">🛒</div>购物</div>
+      <div class="cat-chip" data-cat="housing"><div class="e">🏠</div>住房</div>
+      <div class="cat-chip" data-cat="entertainment"><div class="e">🎉</div>娱乐</div>
+      <div class="cat-chip" data-cat="health"><div class="e">💊</div>医疗</div>
+      <div class="cat-chip" data-cat="ads"><div class="e">📣</div>广告</div>
+      <div class="cat-chip" data-cat="other"><div class="e">📌</div>其他</div>
     </div>
-    <div class="field">
-      <label>描述</label>
-      <input type="text" placeholder="例：午餐、油费…" id="m-desc">
-    </div>
-    <div class="field" id="cat-field">
-      <label>分类</label>
-      <div class="cat-grid" id="cat-grid">
-        <div class="cat-chip sel" data-cat="food"><div class="e">🍜</div>餐饮</div>
-        <div class="cat-chip" data-cat="transport"><div class="e">🚗</div>交通</div>
-        <div class="cat-chip" data-cat="shopping"><div class="e">🛒</div>购物</div>
-        <div class="cat-chip" data-cat="housing"><div class="e">🏠</div>住房</div>
-        <div class="cat-chip" data-cat="entertainment"><div class="e">🎉</div>娱乐</div>
-        <div class="cat-chip" data-cat="health"><div class="e">💊</div>医疗</div>
-        <div class="cat-chip" data-cat="education"><div class="e">📚</div>教育</div>
-        <div class="cat-chip" data-cat="other"><div class="e">📌</div>其他</div>
-      </div>
-    </div>
-    <button class="btn-primary" id="modal-save">保存记录</button>
+  </div>
+  <button class="btn-save" id="m-tx-save">保存</button>
+  <button class="btn-del" id="m-tx-del" style="display:none" onclick="deleteTx()">删除此记录</button>
+</div>
+</div>
+
+<!-- ══ EDIT FIELD MODAL ══ -->
+<div class="modal-bg" id="modal-edit">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <h2 id="edit-title">编辑</h2>
+  <div class="field"><label id="edit-label">数值</label><input id="edit-input" placeholder="输入…"></div>
+  <button class="btn-save" id="edit-save">保存</button>
+</div>
+</div>
+
+<!-- ══ EDIT FIXED MODAL ══ -->
+<div class="modal-bg" id="modal-fixed">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <h2 id="fixed-modal-title">编辑支出</h2>
+  <div class="field"><label>金额 (RM)</label><input type="number" inputmode="decimal" id="fixed-input" placeholder="0.00"></div>
+  <button class="btn-save" id="fixed-save">保存</button>
+</div>
+</div>
+
+<!-- ══ ADD GOAL MODAL ══ -->
+<div class="modal-bg" id="modal-goal">
+<div class="modal">
+  <div class="modal-handle"></div>
+  <h2 id="goal-modal-title">添加目标</h2>
+  <div class="field"><label>目标名称</label><input type="text" id="g-name" placeholder="例：日本旅游"></div>
+  <div class="field"><label>Emoji</label><input type="text" id="g-ico" placeholder="🏖️" maxlength="2"></div>
+  <div class="modal-row">
+    <div class="field"><label>目标金额 (RM)</label><input type="number" inputmode="decimal" id="g-target" placeholder="10000"></div>
+    <div class="field"><label>已存 (RM)</label><input type="number" inputmode="decimal" id="g-saved" placeholder="0"></div>
+  </div>
+  <div class="field"><label>截止日期</label><input type="date" id="g-date"></div>
+  <button class="btn-save" id="goal-save">保存</button>
+  <button class="btn-del" id="goal-del" style="display:none">删除目标</button>
+</div>
+</div>
+
+<!-- ══ CONFIRM RESET ══ -->
+<div class="confirm-bg" id="confirm-bg">
+<div class="confirm-box">
+  <h3>⚠️ 重置所有数据？</h3>
+  <p>这会清除所有交易记录、收入设置和个人数据，无法撤销。</p>
+  <div class="confirm-btns">
+    <button class="btn-cancel" onclick="closeConfirm()">取消</button>
+    <button class="btn-confirm" onclick="doReset()">确认重置</button>
   </div>
 </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <script>
-// ── Data ──
-const CAT_MAP = {food:'餐饮',transport:'交通',shopping:'购物',housing:'住房',entertainment:'娱乐',health:'医疗',education:'教育',salary:'薪资',commission:'佣金',rental:'租金',other:'其他'};
-const CAT_ICON = {food:'🍜',transport:'🚗',shopping:'🛒',housing:'🏠',entertainment:'🎉',health:'💊',education:'📚',salary:'💼',commission:'💼',rental:'🏘️',other:'📌'};
-const CAT_COLOR = {food:'rgba(245,200,66,.12)',transport:'rgba(255,96,96,.12)',shopping:'rgba(155,143,255,.12)',housing:'rgba(31,217,164,.12)',entertainment:'rgba(245,200,66,.12)',health:'rgba(255,96,96,.12)',education:'rgba(155,143,255,.12)',salary:'rgba(31,217,164,.12)',commission:'rgba(31,217,164,.12)',rental:'rgba(31,217,164,.12)',other:'rgba(91,103,136,.2)'};
+// ══ DEFAULT DATA ══
+const DEFAULT = {
+  name: 'Felix',
+  income: 0,
+  incomeSources: [
+    {id:1, name:'底薪', amt:0, icon:'💼'},
+    {id:2, name:'佣金', amt:0, icon:'🏠'},
+    {id:3, name:'租金', amt:0, icon:'🏘️'},
+  ],
+  fixed: [
+    {id:1,  name:'Car Installment', icon:'🚗', color:'rgba(255,96,96,.12)',   amt:0},
+    {id:2,  name:'Credit Card',     icon:'💳', color:'rgba(155,143,255,.12)', amt:0},
+    {id:3,  name:'Facebook Ads',    icon:'📣', color:'rgba(245,200,66,.12)',  amt:0},
+    {id:4,  name:'AI Subscribe',    icon:'🤖', color:'rgba(31,217,164,.12)',  amt:0},
+    {id:5,  name:'Petrol',          icon:'⛽', color:'rgba(255,96,96,.12)',   amt:0},
+    {id:6,  name:'Maintenance Fee', icon:'🏢', color:'rgba(91,103,136,.2)',   amt:0},
+    {id:7,  name:'Parking',         icon:'🅿️', color:'rgba(245,200,66,.12)', amt:0},
+    {id:8,  name:'Toll',            icon:'🛣️', color:'rgba(155,143,255,.12)', amt:0},
+    {id:9,  name:'Food',            icon:'🍜', color:'rgba(245,200,66,.12)',  amt:0},
+    {id:10, name:'Entertainment',   icon:'🎉', color:'rgba(31,217,164,.12)',  amt:0},
+  ],
+  txns: [],
+  goals: [],
+};
 
-let transactions = JSON.parse(localStorage.getItem('txns') || 'null') || [
-  {id:1,type:'income',cat:'commission',desc:'房产销售佣金',amt:3200,date:'2026-07-07'},
-  {id:2,type:'expense',cat:'transport',desc:'Petronas 加油站',amt:120,date:'2026-07-07'},
-  {id:3,type:'expense',cat:'food',desc:'Old Town White Coffee',amt:28,date:'2026-07-06'},
-  {id:4,type:'expense',cat:'shopping',desc:'Shopee 购物',amt:312,date:'2026-07-06'},
-  {id:5,type:'income',cat:'rental',desc:'租金收入',amt:1900,date:'2026-07-05'},
-  {id:6,type:'expense',cat:'housing',desc:'办公室租金',amt:1800,date:'2026-07-01'},
-  {id:7,type:'expense',cat:'food',desc:'Jaya Grocer',amt:156,date:'2026-07-01'},
-  {id:8,type:'income',cat:'salary',desc:'底薪',amt:3400,date:'2026-07-01'},
-];
-function saveTxns(){ localStorage.setItem('txns',JSON.stringify(transactions)) }
+// ══ STATE ══
+let D = load();
 
-// ── Date helpers ──
-function dateLabel(d){
-  const today = '2026-07-07', yesterday = '2026-07-06';
-  if(d===today) return '今天'; if(d===yesterday) return '昨天';
-  return d.slice(5).replace('-','月')+'日';
+function load(){
+  try{
+    const s = localStorage.getItem('fos_data');
+    if(!s) return JSON.parse(JSON.stringify(DEFAULT));
+    return JSON.parse(s);
+  } catch(e){ return JSON.parse(JSON.stringify(DEFAULT)); }
 }
-function fmtAmt(n){ return 'RM '+n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}) }
+function save(){ localStorage.setItem('fos_data', JSON.stringify(D)) }
 
-// ── Init dynamic text ──
-document.getElementById('month-label').textContent = '七月 · 2026';
-document.getElementById('greeting').textContent = '你好，Felix 👋';
-const now = new Date('2026-07-07'), eom = new Date('2026-07-31');
-document.getElementById('days-left').textContent = Math.round((eom-now)/86400000);
+// ══ COMPUTED ══
+function totalIncome(){ return D.incomeSources.reduce((a,s)=>a+s.amt,0) }
+function totalFixed(){ return D.fixed.reduce((a,f)=>a+f.amt,0) }
+function netSave(){ return totalIncome() - totalFixed() }
+function fmt(n){ return 'RM '+Math.abs(n).toLocaleString('en-MY',{minimumFractionDigits:0,maximumFractionDigits:0}) }
+function fmt2(n){ return 'RM '+Math.abs(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2}) }
+function today(){ return new Date().toISOString().slice(0,10) }
 
-// ── Render tx list ──
+// ══ RENDER HOME ══
+function renderHome(){
+  const inc = totalIncome(), exp = totalFixed(), net = inc - exp;
+  document.getElementById('net-val').textContent = net.toLocaleString('en-MY',{minimumFractionDigits:0});
+  document.getElementById('home-inc').textContent = fmt(inc);
+  document.getElementById('home-exp').textContent = fmt(exp);
+
+  // income sources
+  let ih = D.incomeSources.map(s=>`
+    <div class="income-row">
+      <div class="fixed-ico" style="background:rgba(31,217,164,.12)">${s.icon}</div>
+      <div class="fixed-info"><div class="fixed-name">${s.name}</div></div>
+      <div class="fixed-amt" style="color:var(--mint)" onclick="editIncomeSource(${s.id})">${fmt(s.amt)}</div>
+    </div>`).join('');
+  ih += `<div class="income-total"><span class="lbl">月收入合计</span><span class="val">${fmt(inc)}</span></div>`;
+  document.getElementById('income-list').innerHTML = ih;
+
+  // fixed expenses
+  let fh = D.fixed.map(f=>`
+    <div class="fixed-row">
+      <div class="fixed-ico" style="background:${f.color}">${f.icon}</div>
+      <div class="fixed-info"><div class="fixed-name">${f.name}</div></div>
+      <div class="fixed-amt" onclick="editFixed(${f.id})">${fmt(f.amt)}</div>
+    </div>`).join('');
+  fh += `<div class="fixed-total"><span class="lbl">固定支出合计</span><span class="val">${fmt(exp)}</span></div>`;
+  document.getElementById('fixed-list').innerHTML = fh;
+
+  // recent txns
+  const recent = D.txns.slice(0,5);
+  document.getElementById('home-tx-list').innerHTML = recent.length
+    ? recent.map(txHTML).join('')
+    : '<div class="no-tx">暂无交易记录</div>';
+
+  // stats on me page
+  document.getElementById('stat-inc').textContent = fmt(inc);
+  document.getElementById('stat-exp').textContent = fmt(exp);
+  const pct = inc > 0 ? Math.round((net/inc)*100) : 0;
+  document.getElementById('stat-save').textContent = pct+'%';
+  document.getElementById('prof-name').textContent = D.name || 'Felix';
+}
+
+// ══ TX HTML ══
+const CAT_ICON = {food:'🍜',transport:'🚗',shopping:'🛒',housing:'🏠',entertainment:'🎉',health:'💊',ads:'📣',salary:'💼',commission:'🏠',rental:'🏘️',other:'📌'};
+const CAT_NAME = {food:'餐饮',transport:'交通',shopping:'购物',housing:'住房',entertainment:'娱乐',health:'医疗',ads:'广告/推广',salary:'底薪',commission:'佣金',rental:'租金',other:'其他'};
+const CAT_CLR  = {food:'rgba(245,200,66,.12)',transport:'rgba(255,96,96,.12)',shopping:'rgba(155,143,255,.12)',housing:'rgba(31,217,164,.12)',entertainment:'rgba(245,200,66,.12)',health:'rgba(255,96,96,.12)',ads:'rgba(245,200,66,.12)',salary:'rgba(31,217,164,.12)',commission:'rgba(31,217,164,.12)',rental:'rgba(31,217,164,.12)',other:'rgba(91,103,136,.2)'};
+
 function txHTML(t){
-  const sign = t.type==='income' ? '+' : '-';
-  const cls = t.type==='income' ? 'pos' : 'neg';
-  return `<div class="tx-item">
-    <div class="tx-ico" style="background:${CAT_COLOR[t.cat]||'rgba(91,103,136,.2)'}">${CAT_ICON[t.cat]||'📌'}</div>
-    <div class="tx-info"><div class="name">${t.desc}</div><div class="cat">${CAT_MAP[t.cat]||'其他'} · ${dateLabel(t.date)}</div></div>
-    <div class="tx-right"><div class="tx-amt ${cls}">${sign}${fmtAmt(t.amt)}</div></div>
+  const pos = t.type==='income';
+  return `<div class="tx-item" onclick="editTx(${t.id})">
+    <div class="tx-ico" style="background:${CAT_CLR[t.cat]||'rgba(91,103,136,.2)'}">${CAT_ICON[t.cat]||'📌'}</div>
+    <div class="tx-info"><div class="tx-name">${t.desc}</div><div class="tx-cat">${CAT_NAME[t.cat]||'其他'} · ${t.date||''}</div></div>
+    <div><div class="tx-amt ${pos?'pos':'neg'}">${pos?'+':'-'}${fmt2(t.amt)}</div></div>
   </div>`;
 }
-function renderHomeTx(){
-  document.getElementById('home-tx').innerHTML = transactions.slice(0,5).map(txHTML).join('');
-}
-function renderTxPage(filter='all', search=''){
-  const filtered = transactions.filter(t => {
-    const mf = filter==='all' || t.type===filter || t.cat===filter;
-    const ms = !search || t.desc.toLowerCase().includes(search.toLowerCase());
-    return mf && ms;
-  });
-  const groups = {};
-  filtered.forEach(t => { (groups[t.date] = groups[t.date]||[]).push(t); });
-  let html = '';
-  Object.keys(groups).sort((a,b)=>b.localeCompare(a)).forEach(d => {
-    html += `<div class="tx-group-label">${dateLabel(d)}</div><div class="tx-list">${groups[d].map(txHTML).join('')}</div>`;
-  });
-  document.getElementById('tx-page-list').innerHTML = html || '<div style="text-align:center;color:var(--muted);margin-top:40px;font-size:.88rem">暂无记录</div>';
-}
-renderHomeTx(); renderTxPage();
 
-// ── Filter chips ──
-let curFilter = 'all';
-document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', ()=>{
-  document.querySelectorAll('.fchip').forEach(x=>x.classList.remove('active'));
-  c.classList.add('active'); curFilter=c.dataset.f;
-  renderTxPage(curFilter, document.getElementById('tx-search').value);
+function dateLabel(d){
+  const t=today(),y=new Date(t); y.setDate(y.getDate()-1); const ys=y.toISOString().slice(0,10);
+  if(d===t)return '今天'; if(d===ys)return '昨天'; return d;
+}
+
+// ══ RENDER TXN PAGE ══
+function renderTxns(filter='all',search=''){
+  const list = D.txns.filter(t=>{
+    const mf = filter==='all'||t.type===filter||t.cat===filter;
+    const ms = !search||t.desc.toLowerCase().includes(search.toLowerCase());
+    return mf&&ms;
+  });
+  const groups={};
+  list.forEach(t=>(groups[t.date]=groups[t.date]||[]).push(t));
+  let html='';
+  Object.keys(groups).sort((a,b)=>b.localeCompare(a)).forEach(d=>{
+    html+=`<div class="tx-group-lbl">${dateLabel(d)}</div><div class="tx-list">${groups[d].map(txHTML).join('')}</div>`;
+  });
+  document.getElementById('txn-page-list').innerHTML = html||'<div class="no-tx">暂无记录</div>';
+}
+
+// ══ RENDER GOALS ══
+function renderGoals(){
+  const COLORS=['linear-gradient(90deg,#1FD9A4,#0FA88A)','linear-gradient(90deg,#9B8FFF,#7A6FE8)','linear-gradient(90deg,#F5C842,#E0A800)','linear-gradient(90deg,#FF6060,#CC4040)'];
+  document.getElementById('goals-list').innerHTML = D.goals.map((g,i)=>{
+    const pct = g.target>0 ? Math.min(100,Math.round((g.saved/g.target)*100)) : 0;
+    const remaining = Math.max(0,g.target-g.saved);
+    return `<div class="goal-card">
+      <div class="goal-hd">
+        <div class="goal-ico">${g.icon||'🎯'}</div>
+        <div style="flex:1"><div class="goal-name">${g.name}</div>
+        <div class="goal-target" onclick="openEditGoal(${g.id})">目标 ${fmt(g.target)} · ${g.date||'—'}</div></div>
+      </div>
+      <div class="goal-prog">
+        <div class="goal-pct" style="color:${['var(--mint)','var(--lav)','var(--gold)','var(--coral)'][i%4]}">${pct}%</div>
+        <div class="goal-saved" onclick="openEditGoal(${g.id})">${fmt(g.saved)} 已存</div>
+      </div>
+      <div class="gbar"><div class="gfill" style="width:${pct}%;background:${COLORS[i%4]}"></div></div>
+      <div class="goal-ft"><span>还需 ${fmt(remaining)}</span><span onclick="openEditGoal(${g.id})" style="cursor:pointer;color:var(--mint)">编辑 ›</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ══ DATE ══
+const MONTHS=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+const now=new Date(); document.getElementById('month-lbl').textContent=MONTHS[now.getMonth()]+' · '+now.getFullYear();
+
+// ══ TABS ══
+let curTab='home';
+function goTab(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelector(`.tab[data-page="${p}"]`).classList.add('active');
+  curTab=p;
+  if(p==='txn') renderTxns(curFilter,document.getElementById('tx-search').value);
+  if(p==='goals') renderGoals();
+  if(p==='home') renderHome();
+  if(p==='me') renderHome();
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>goTab(t.dataset.page)));
+
+// ══ TXN FILTER ══
+let curFilter='all';
+document.querySelectorAll('.fchip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.fchip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on'); curFilter=c.dataset.f;
+  renderTxns(curFilter,document.getElementById('tx-search').value);
 }));
-document.getElementById('tx-search').addEventListener('input', e => {
-  renderTxPage(curFilter, e.target.value);
-});
+document.getElementById('tx-search').addEventListener('input',e=>renderTxns(curFilter,e.target.value));
 
-// ── Tab navigation ──
-function goTab(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelector(`.tab[data-page="${page}"]`).classList.add('active');
-  if(page==='txn') renderTxPage(curFilter, document.getElementById('tx-search').value);
-}
-document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', ()=> goTab(t.dataset.page)));
-
-// ── Modal ──
-let modalType = 'expense';
-function openModal(type){
-  modalType = type;
-  document.getElementById('modal-title').textContent = type==='income' ? '记录收入' : '记录支出';
-  document.getElementById('cat-field').style.display = type==='income' ? 'none' : 'block';
-  document.getElementById('m-amount').value = '';
-  document.getElementById('m-desc').value = '';
-  document.getElementById('modal').classList.add('open');
-  setTimeout(()=>document.getElementById('m-amount').focus(),100);
-}
-document.getElementById('modal').addEventListener('click', e => {
-  if(e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
-});
-document.querySelectorAll('.cat-chip').forEach(c => c.addEventListener('click', ()=>{
+// ══ CAT CHIPS ══
+document.querySelectorAll('.cat-chip').forEach(c=>c.addEventListener('click',()=>{
   document.querySelectorAll('.cat-chip').forEach(x=>x.classList.remove('sel'));
   c.classList.add('sel');
 }));
-document.getElementById('modal-save').addEventListener('click', ()=>{
-  const amt = parseFloat(document.getElementById('m-amount').value);
-  const desc = document.getElementById('m-desc').value.trim();
-  if(!amt || !desc){ document.getElementById('m-amount').focus(); return; }
-  const selCat = document.querySelector('.cat-chip.sel');
-  const cat = modalType==='income' ? 'salary' : (selCat ? selCat.dataset.cat : 'other');
-  transactions.unshift({id:Date.now(),type:modalType,cat,desc,amt,date:'2026-07-07'});
-  saveTxns(); renderHomeTx(); renderTxPage(curFilter);
-  document.getElementById('modal').classList.remove('open');
+
+// ══ ADD / EDIT TX ══
+let editingTxId=null;
+function openAddTx(type){
+  editingTxId=null;
+  document.getElementById('modal-tx-title').textContent=type==='income'?'记录收入':'记录支出';
+  document.getElementById('m-cat-field').style.display=type==='income'?'none':'block';
+  document.getElementById('m-amt').value='';
+  document.getElementById('m-desc').value='';
+  document.getElementById('m-date').value=today();
+  document.getElementById('m-tx-del').style.display='none';
+  document.getElementById('modal-tx').classList.add('open');
+  setTimeout(()=>document.getElementById('m-amt').focus(),100);
+  document.getElementById('m-tx-save').onclick=()=>saveTx(type);
+}
+function editTx(id){
+  const t=D.txns.find(x=>x.id===id); if(!t)return;
+  editingTxId=id;
+  document.getElementById('modal-tx-title').textContent='编辑记录';
+  document.getElementById('m-cat-field').style.display=t.type==='income'?'none':'block';
+  document.getElementById('m-amt').value=t.amt;
+  document.getElementById('m-desc').value=t.desc;
+  document.getElementById('m-date').value=t.date;
+  document.getElementById('m-tx-del').style.display='block';
+  document.querySelectorAll('.cat-chip').forEach(c=>{c.classList.toggle('sel',c.dataset.cat===t.cat)});
+  document.getElementById('modal-tx').classList.add('open');
+  document.getElementById('m-tx-save').onclick=()=>saveTx(t.type);
+}
+function saveTx(type){
+  const amt=parseFloat(document.getElementById('m-amt').value);
+  const desc=document.getElementById('m-desc').value.trim();
+  const date=document.getElementById('m-date').value||today();
+  if(!amt||!desc){document.getElementById('m-amt').focus();return;}
+  const selCat=document.querySelector('.cat-chip.sel');
+  const cat=type==='income'?'salary':(selCat?selCat.dataset.cat:'other');
+  if(editingTxId){
+    const i=D.txns.findIndex(x=>x.id===editingTxId);
+    if(i>=0) D.txns[i]={...D.txns[i],amt,desc,date,cat};
+  } else {
+    D.txns.unshift({id:Date.now(),type,cat,desc,amt,date});
+  }
+  save(); renderHome();
+  if(curTab==='txn') renderTxns(curFilter,document.getElementById('tx-search').value);
+  closeModal('modal-tx'); toast('✅ 已保存');
+}
+function deleteTx(){
+  if(!editingTxId)return;
+  D.txns=D.txns.filter(x=>x.id!==editingTxId);
+  save(); renderHome(); renderTxns(curFilter);
+  closeModal('modal-tx'); toast('🗑️ 已删除');
+}
+
+// ══ EDIT FIXED ══
+let editingFixedId=null;
+function editFixed(id){
+  const f=D.fixed.find(x=>x.id===id); if(!f)return;
+  editingFixedId=id;
+  document.getElementById('fixed-modal-title').textContent='编辑 · '+f.name;
+  document.getElementById('fixed-input').value=f.amt||'';
+  document.getElementById('modal-fixed').classList.add('open');
+  setTimeout(()=>document.getElementById('fixed-input').focus(),100);
+}
+document.getElementById('fixed-save').onclick=()=>{
+  const v=parseFloat(document.getElementById('fixed-input').value)||0;
+  const i=D.fixed.findIndex(x=>x.id===editingFixedId);
+  if(i>=0){D.fixed[i].amt=v;save();renderHome();}
+  closeModal('modal-fixed'); toast('✅ 已更新');
+};
+
+// ══ EDIT INCOME SOURCE ══
+let editingIncId=null;
+function editIncomeSource(id){
+  const s=D.incomeSources.find(x=>x.id===id); if(!s)return;
+  editingIncId=id;
+  document.getElementById('fixed-modal-title').textContent='编辑 · '+s.name;
+  document.getElementById('fixed-input').value=s.amt||'';
+  document.getElementById('modal-fixed').classList.add('open');
+  document.getElementById('fixed-save').onclick=()=>{
+    const v=parseFloat(document.getElementById('fixed-input').value)||0;
+    const i=D.incomeSources.findIndex(x=>x.id===editingIncId);
+    if(i>=0){D.incomeSources[i].amt=v;save();renderHome();}
+    closeModal('modal-fixed'); toast('✅ 已更新');
+    // restore fixed save handler
+    document.getElementById('fixed-save').onclick=fixedSaveHandler;
+  };
+}
+const fixedSaveHandler=document.getElementById('fixed-save').onclick;
+
+// ══ GENERIC EDIT FIELD ══
+function editField(key,label,type){
+  if(key==='expense-total'){goTab('home');return;}
+  document.getElementById('edit-title').textContent='编辑';
+  document.getElementById('edit-label').textContent=label;
+  const inp=document.getElementById('edit-input');
+  inp.type=type||'text'; inp.inputMode=type==='number'?'decimal':'text';
+  if(key==='name') inp.value=D.name||'';
+  else if(key==='income') inp.value=totalIncome()||'';
+  document.getElementById('modal-edit').classList.add('open');
+  setTimeout(()=>inp.focus(),100);
+  document.getElementById('edit-save').onclick=()=>{
+    const v=inp.value.trim();
+    if(key==='name'&&v){D.name=v;save();renderHome();document.getElementById('prof-name').textContent=v;}
+    closeModal('modal-edit'); toast('✅ 已保存');
+  };
+}
+
+// ══ GOALS ══
+let editingGoalId=null;
+function openAddGoal(){
+  editingGoalId=null;
+  document.getElementById('goal-modal-title').textContent='添加目标';
+  document.getElementById('g-name').value='';
+  document.getElementById('g-ico').value='🎯';
+  document.getElementById('g-target').value='';
+  document.getElementById('g-saved').value='';
+  document.getElementById('g-date').value='';
+  document.getElementById('goal-del').style.display='none';
+  document.getElementById('modal-goal').classList.add('open');
+}
+function openEditGoal(id){
+  const g=D.goals.find(x=>x.id===id); if(!g)return;
+  editingGoalId=id;
+  document.getElementById('goal-modal-title').textContent='编辑目标';
+  document.getElementById('g-name').value=g.name;
+  document.getElementById('g-ico').value=g.icon||'🎯';
+  document.getElementById('g-target').value=g.target;
+  document.getElementById('g-saved').value=g.saved;
+  document.getElementById('g-date').value=g.date||'';
+  document.getElementById('goal-del').style.display='block';
+  document.getElementById('modal-goal').classList.add('open');
+}
+document.getElementById('goal-save').onclick=()=>{
+  const name=document.getElementById('g-name').value.trim();
+  const icon=document.getElementById('g-ico').value.trim()||'🎯';
+  const target=parseFloat(document.getElementById('g-target').value)||0;
+  const saved=parseFloat(document.getElementById('g-saved').value)||0;
+  const date=document.getElementById('g-date').value;
+  if(!name)return;
+  if(editingGoalId){
+    const i=D.goals.findIndex(x=>x.id===editingGoalId);
+    if(i>=0) D.goals[i]={...D.goals[i],name,icon,target,saved,date};
+  } else {
+    D.goals.push({id:Date.now(),name,icon,target,saved,date});
+  }
+  save(); renderGoals(); closeModal('modal-goal'); toast('✅ 已保存');
+};
+document.getElementById('goal-del').onclick=()=>{
+  D.goals=D.goals.filter(x=>x.id!==editingGoalId);
+  save(); renderGoals(); closeModal('modal-goal'); toast('🗑️ 已删除');
+};
+
+// ══ RESET ══
+function confirmReset(){ document.getElementById('confirm-bg').classList.add('open') }
+function closeConfirm(){ document.getElementById('confirm-bg').classList.remove('open') }
+function doReset(){
+  localStorage.removeItem('fos_data');
+  D=JSON.parse(JSON.stringify(DEFAULT));
+  closeConfirm(); renderHome(); renderGoals();
+  goTab('home'); toast('🔄 数据已重置');
+}
+
+// ══ MODAL HELPERS ══
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+['modal-tx','modal-edit','modal-fixed','modal-goal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{
+    if(e.target===document.getElementById(id)) closeModal(id);
+  });
 });
 
-// ── Sparkline ──
-(function(){
-  const c = document.getElementById('chart');
-  const dpr = window.devicePixelRatio||1;
-  const W = c.offsetWidth||320, H=70;
-  c.width=W*dpr; c.height=H*dpr;
-  const ctx=c.getContext('2d'); ctx.scale(dpr,dpr);
-  const inc=[6800,7200,8100,7600,9000,8500];
-  const exp=[5100,4800,6200,5500,4900,5260];
-  const mos=['2月','3月','4月','5月','6月','7月'];
-  const min=4000,max=10000;
-  const xOf=i=>28+i*(W-40)/5;
-  const yOf=v=>H-18-((v-min)/(max-min))*(H-28);
-  [5000,7000,9000].forEach(v=>{
-    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(0,yOf(v));ctx.lineTo(W,yOf(v));ctx.stroke();
-  });
-  function line(data,color,alpha){
-    ctx.beginPath();
-    data.forEach((v,i)=>i?ctx.lineTo(xOf(i),yOf(v)):ctx.moveTo(xOf(i),yOf(v)));
-    ctx.save();
-    const gl=ctx.createLinearGradient(0,0,0,H);
-    gl.addColorStop(0,color.replace(')',`,${alpha})`).replace('rgb(','rgba('));
-    gl.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.lineTo(xOf(data.length-1),H);ctx.lineTo(xOf(0),H);ctx.closePath();
-    ctx.fillStyle=color==='#1FD9A4'?`rgba(31,217,164,${alpha})`:`rgba(255,96,96,${alpha})`;
-    ctx.fill();ctx.restore();
-    ctx.beginPath();
-    data.forEach((v,i)=>i?ctx.lineTo(xOf(i),yOf(v)):ctx.moveTo(xOf(i),yOf(v)));
-    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
-    const lx=xOf(data.length-1),ly=yOf(data[data.length-1]);
-    ctx.beginPath();ctx.arc(lx,ly,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-  }
-  line(inc,'#1FD9A4',.08);line(exp,'#FF6060',.08);
-  ctx.fillStyle='rgba(91,103,136,.7)';ctx.font=`9px -apple-system,sans-serif`;ctx.textAlign='center';
-  mos.forEach((m,i)=>ctx.fillText(m,xOf(i),H-3));
-})();
+// ══ TOAST ══
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
 
-// ── Service worker ──
+// ══ EXPORT ══
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='finance-os-backup.json'; a.click();
+}
+
+// ══ SW ══
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+// ══ INIT ══
+renderHome();
 </script>
 </body>
 </html>
