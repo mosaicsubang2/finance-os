@@ -189,6 +189,25 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .income-total{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(31,217,164,.05);border-top:1px solid rgba(31,217,164,.1)}
 .income-total .lbl{font-size:.78rem;font-weight:600;color:var(--sub)}
 .income-total .val{font-size:1rem;font-weight:700;color:var(--mint);font-variant-numeric:tabular-nums}
+
+/* ── SAFE SPEND CARD ── */
+.safe-card{border:1px solid rgba(31,217,164,.22);border-radius:22px;padding:18px 18px 14px;margin-bottom:12px;position:relative;overflow:hidden;background:linear-gradient(145deg,#0E2318,#0C1910)}
+.safe-card::before{content:'';position:absolute;right:-30px;top:-30px;width:130px;height:130px;background:radial-gradient(circle,rgba(31,217,164,.09) 0%,transparent 70%);pointer-events:none}
+.safe-eyebrow{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(31,217,164,.55);margin-bottom:3px}
+.safe-big{font-size:2rem;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1.1;margin-bottom:2px}
+.safe-hint{font-size:.7rem;color:var(--sub);margin-bottom:12px;line-height:1.4}
+.safe-pills{display:flex;gap:7px}
+.safe-pill{flex:1;background:rgba(255,255,255,.05);border-radius:11px;padding:9px 11px}
+.safe-pill .sp-lbl{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.safe-pill .sp-val{font-size:.86rem;font-weight:700;font-variant-numeric:tabular-nums}
+.safe-update-btn{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;background:rgba(31,217,164,.08);border:1px solid rgba(31,217,164,.15);border-radius:11px;padding:8px;cursor:pointer;font-size:.75rem;font-weight:600;color:rgba(31,217,164,.75);-webkit-tap-highlight-color:transparent}
+.safe-update-btn:active{background:rgba(31,217,164,.16)}
+
+/* ── PURPOSE CHIPS ── */
+.purpose-chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.purpose-chip{padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:600;background:rgba(255,255,255,.05);border:1.5px solid transparent;color:var(--sub);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s}
+.purpose-chip.sel{background:rgba(91,143,255,.12);border-color:rgba(91,143,255,.4);color:#7EB5FF}
+.purpose-badge{display:inline-block;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:6px;background:rgba(91,143,255,.12);color:#7EB5FF;margin-left:5px;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -216,6 +235,28 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
         <div class="lbl">固定支出</div><div class="val" id="home-exp">RM 0</div>
       </div>
     </div>
+  </div>
+
+  <!-- safe to spend -->
+  <div class="safe-card">
+    <div class="safe-eyebrow">今天可以花多少？</div>
+    <div class="safe-big" id="safe-big" style="color:var(--muted)">RM —</div>
+    <div class="safe-hint" id="safe-hint">请更新银行余额来计算</div>
+    <div class="safe-pills">
+      <div class="safe-pill">
+        <div class="sp-lbl">银行余额</div>
+        <div class="sp-val" id="safe-bank" style="color:var(--text)">—</div>
+      </div>
+      <div class="safe-pill">
+        <div class="sp-lbl">固定支出</div>
+        <div class="sp-val" id="safe-fixed" style="color:var(--coral)">—</div>
+      </div>
+      <div class="safe-pill">
+        <div class="sp-lbl">上次更新</div>
+        <div class="sp-val" id="safe-updated" style="color:var(--muted);font-size:.72rem">—</div>
+      </div>
+    </div>
+    <div class="safe-update-btn" onclick="openUpdateBalance()">✏️ 更新银行余额</div>
   </div>
 
   <!-- quick actions -->
@@ -358,6 +399,15 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
       <div class="cat-chip" data-cat="other"><div class="e">📌</div>其他</div>
     </div>
   </div>
+  <div class="field" id="m-purpose-field">
+    <label>用途 <span style="color:var(--muted);font-weight:400;font-size:.65rem">(可选)</span></label>
+    <div class="purpose-chips" id="purpose-chips">
+      <div class="purpose-chip" data-p="business">💼 业务</div>
+      <div class="purpose-chip" data-p="family">👨‍👩‍👧 家人</div>
+      <div class="purpose-chip" data-p="investment">💰 投资</div>
+      <div class="purpose-chip" data-p="personal">🛍 个人</div>
+    </div>
+  </div>
   <button class="btn-save" id="m-tx-save">保存</button>
   <button class="btn-del" id="m-tx-del" style="display:none" onclick="deleteTx()">删除此记录</button>
 </div>
@@ -420,6 +470,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 const DEFAULT = {
   name: 'Felix',
   income: 0,
+  currentBalance: 0,
+  lastBalanceUpdate: '',
   incomeSources: [
     {id:1, name:'底薪', amt:0, icon:'💼'},
     {id:2, name:'佣金', amt:0, icon:'🏠'},
@@ -500,6 +552,7 @@ function renderHome(){
   const pct = inc > 0 ? Math.round((net/inc)*100) : 0;
   document.getElementById('stat-save').textContent = pct+'%';
   document.getElementById('prof-name').textContent = D.name || 'Felix';
+  renderSafeSpend();
 }
 
 // ══ TX HTML ══
@@ -507,11 +560,14 @@ const CAT_ICON = {food:'🍜',transport:'🚗',shopping:'🛒',housing:'🏠',en
 const CAT_NAME = {food:'餐饮',transport:'交通',shopping:'购物',housing:'住房',entertainment:'娱乐',health:'医疗',ads:'广告/推广',salary:'底薪',commission:'佣金',rental:'租金',other:'其他'};
 const CAT_CLR  = {food:'rgba(245,200,66,.12)',transport:'rgba(255,96,96,.12)',shopping:'rgba(155,143,255,.12)',housing:'rgba(31,217,164,.12)',entertainment:'rgba(245,200,66,.12)',health:'rgba(255,96,96,.12)',ads:'rgba(245,200,66,.12)',salary:'rgba(31,217,164,.12)',commission:'rgba(31,217,164,.12)',rental:'rgba(31,217,164,.12)',other:'rgba(91,103,136,.2)'};
 
+const PURPOSE_LABEL = {business:'💼 业务',family:'👨‍👩‍👧 家人',investment:'💰 投资',personal:'🛍 个人'};
+
 function txHTML(t){
   const pos = t.type==='income';
+  const purposeBadge = t.purpose ? `<span class="purpose-badge">${PURPOSE_LABEL[t.purpose]||t.purpose}</span>` : '';
   return `<div class="tx-item" onclick="editTx(${t.id})">
     <div class="tx-ico" style="background:${CAT_CLR[t.cat]||'rgba(91,103,136,.2)'}">${CAT_ICON[t.cat]||'📌'}</div>
-    <div class="tx-info"><div class="tx-name">${t.desc}</div><div class="tx-cat">${CAT_NAME[t.cat]||'其他'} · ${t.date||''}</div></div>
+    <div class="tx-info"><div class="tx-name">${t.desc}</div><div class="tx-cat">${CAT_NAME[t.cat]||'其他'} · ${t.date||''}${purposeBadge}</div></div>
     <div><div class="tx-amt ${pos?'pos':'neg'}">${pos?'+':'-'}${fmt2(t.amt)}</div></div>
   </div>`;
 }
@@ -593,16 +649,68 @@ document.querySelectorAll('.cat-chip').forEach(c=>c.addEventListener('click',()=
   c.classList.add('sel');
 }));
 
+// ══ PURPOSE CHIPS ══
+document.querySelectorAll('.purpose-chip').forEach(c=>c.addEventListener('click',()=>{
+  if(c.classList.contains('sel')){ c.classList.remove('sel'); }
+  else { document.querySelectorAll('.purpose-chip').forEach(x=>x.classList.remove('sel')); c.classList.add('sel'); }
+}));
+
+// ══ SAFE SPEND ══
+function renderSafeSpend(){
+  const bank = D.currentBalance||0;
+  const fixed = totalFixed();
+  const safe = bank - fixed;
+  const bigEl = document.getElementById('safe-big');
+  const hintEl = document.getElementById('safe-hint');
+  if(!bank){
+    bigEl.textContent='RM —'; bigEl.style.color='var(--muted)';
+    hintEl.textContent='请更新银行余额来计算';
+    document.getElementById('safe-bank').textContent='—';
+    document.getElementById('safe-fixed').textContent='—';
+    document.getElementById('safe-updated').textContent='—';
+    return;
+  }
+  const color = safe>5000?'var(--mint)':safe>1500?'var(--gold)':'var(--coral)';
+  bigEl.style.color=color;
+  bigEl.textContent=fmt(safe);
+  hintEl.textContent = safe>=0 ? '扣除所有固定支出后可自由使用' : '⚠️ 余额不足以覆盖固定支出';
+  document.getElementById('safe-bank').textContent=fmt(bank);
+  document.getElementById('safe-fixed').textContent='-'+fmt(fixed);
+  document.getElementById('safe-updated').textContent=D.lastBalanceUpdate||'—';
+}
+
+function openUpdateBalance(){
+  document.getElementById('edit-title').textContent='更新银行余额';
+  document.getElementById('edit-label').textContent='当前 Maybank 余额 (RM)';
+  const inp=document.getElementById('edit-input');
+  inp.type='number'; inp.inputMode='decimal'; inp.placeholder='例：12500';
+  inp.value=D.currentBalance||'';
+  document.getElementById('modal-edit').classList.add('open');
+  setTimeout(()=>inp.focus(),100);
+  document.getElementById('edit-save').onclick=()=>{
+    const v=parseFloat(inp.value);
+    if(!isNaN(v)&&v>=0){
+      D.currentBalance=v;
+      const n=new Date();
+      D.lastBalanceUpdate=`${n.getMonth()+1}月${n.getDate()}日 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+      save(); renderSafeSpend();
+    }
+    closeModal('modal-edit'); toast('✅ 余额已更新');
+  };
+}
+
 // ══ ADD / EDIT TX ══
 let editingTxId=null;
 function openAddTx(type){
   editingTxId=null;
   document.getElementById('modal-tx-title').textContent=type==='income'?'记录收入':'记录支出';
   document.getElementById('m-cat-field').style.display=type==='income'?'none':'block';
+  document.getElementById('m-purpose-field').style.display=type==='income'?'none':'block';
   document.getElementById('m-amt').value='';
   document.getElementById('m-desc').value='';
   document.getElementById('m-date').value=today();
   document.getElementById('m-tx-del').style.display='none';
+  document.querySelectorAll('.purpose-chip').forEach(c=>c.classList.remove('sel'));
   document.getElementById('modal-tx').classList.add('open');
   setTimeout(()=>document.getElementById('m-amt').focus(),100);
   document.getElementById('m-tx-save').onclick=()=>saveTx(type);
@@ -612,11 +720,13 @@ function editTx(id){
   editingTxId=id;
   document.getElementById('modal-tx-title').textContent='编辑记录';
   document.getElementById('m-cat-field').style.display=t.type==='income'?'none':'block';
+  document.getElementById('m-purpose-field').style.display=t.type==='income'?'none':'block';
   document.getElementById('m-amt').value=t.amt;
   document.getElementById('m-desc').value=t.desc;
   document.getElementById('m-date').value=t.date;
   document.getElementById('m-tx-del').style.display='block';
   document.querySelectorAll('.cat-chip').forEach(c=>{c.classList.toggle('sel',c.dataset.cat===t.cat)});
+  document.querySelectorAll('.purpose-chip').forEach(c=>{c.classList.toggle('sel',c.dataset.p===t.purpose)});
   document.getElementById('modal-tx').classList.add('open');
   document.getElementById('m-tx-save').onclick=()=>saveTx(t.type);
 }
@@ -627,11 +737,13 @@ function saveTx(type){
   if(!amt||!desc){document.getElementById('m-amt').focus();return;}
   const selCat=document.querySelector('.cat-chip.sel');
   const cat=type==='income'?'salary':(selCat?selCat.dataset.cat:'other');
+  const selPurpose=document.querySelector('.purpose-chip.sel');
+  const purpose=selPurpose?selPurpose.dataset.p:'';
   if(editingTxId){
     const i=D.txns.findIndex(x=>x.id===editingTxId);
-    if(i>=0) D.txns[i]={...D.txns[i],amt,desc,date,cat};
+    if(i>=0) D.txns[i]={...D.txns[i],amt,desc,date,cat,purpose};
   } else {
-    D.txns.unshift({id:Date.now(),type,cat,desc,amt,date});
+    D.txns.unshift({id:Date.now(),type,cat,desc,amt,date,purpose});
   }
   save(); renderHome();
   if(curTab==='txn') renderTxns(curFilter,document.getElementById('tx-search').value);
