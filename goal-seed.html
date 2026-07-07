@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0C0E14">
+<title>添加目标</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0E14;color:#EFF2FA;font-family:-apple-system,BlinkMacSystemFont,sans-serif;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;gap:20px}
+.card{background:#161B27;border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:28px 24px;width:100%;max-width:380px;text-align:center}
+.icon{font-size:3rem;margin-bottom:12px}
+h1{font-size:1.3rem;font-weight:700;margin-bottom:6px}
+.amount{font-size:2.2rem;font-weight:700;color:#F5C842;font-variant-numeric:tabular-nums;margin:10px 0 4px}
+.deadline{font-size:.85rem;color:#8A9BBE;margin-bottom:22px}
+.field-label{font-size:.69rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#5B6788;margin-bottom:6px;text-align:left}
+input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;color:#EFF2FA;font-size:1rem;font-family:inherit;outline:none;margin-bottom:18px;text-align:left;-webkit-appearance:none}
+input:focus{border-color:#1FD9A4}
+.btn{width:100%;background:#F5C842;color:#000;font-size:1rem;font-weight:700;border:none;border-radius:16px;padding:15px;cursor:pointer;font-family:inherit}
+.btn:active{opacity:.85}
+.btn-skip{width:100%;background:rgba(255,255,255,.05);color:#8A9BBE;font-size:.85rem;font-weight:600;border:none;border-radius:16px;padding:12px;cursor:pointer;font-family:inherit;margin-top:8px}
+#status{font-size:.88rem;font-weight:600;min-height:20px;margin-top:10px;color:#1FD9A4}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">💰</div>
+  <h1>添加储蓄目标</h1>
+  <div class="amount">RM 70,000</div>
+  <div class="deadline">截止 2026年12月31日</div>
+
+  <div class="field-label">我现在已经存了多少？(RM)</div>
+  <input type="number" inputmode="decimal" id="saved-input" placeholder="0" value="0">
+
+  <button class="btn" onclick="addGoal()">添加到 Goals ›</button>
+  <button class="btn-skip" onclick="skip()">跳过，直接进 App</button>
+  <div id="status"></div>
+</div>
+
+<script>
+function addGoal(){
+  const saved = parseFloat(document.getElementById('saved-input').value) || 0;
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem('fos_data') || '{}'); } catch(e){}
+  if(!data.goals) data.goals = [];
+
+  const GOAL_ID = 70000202612;
+  data.goals = data.goals.filter(g => g.id !== GOAL_ID);
+  data.goals.push({
+    id: GOAL_ID,
+    name: 'RM70K Cash Dec',
+    icon: '💰',
+    target: 70000,
+    saved: saved,
+    date: '2026-12-31'
+  });
+
+  localStorage.setItem('fos_data', JSON.stringify(data));
+  document.getElementById('status').textContent = '✅ 目标已加入！跳转中…';
+  setTimeout(() => { window.location.href = './#goals'; }, 1000);
+}
+
+function skip(){ window.location.href = './'; }
+</script>
+</body>
+</html>
