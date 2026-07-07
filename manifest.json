@@ -1,0 +1,14 @@
+{
+  "name": "FinanceOS 理财",
+  "short_name": "理财",
+  "description": "Personal finance tracker",
+  "start_url": "/finance-os/",
+  "display": "standalone",
+  "background_color": "#0C0E14",
+  "theme_color": "#0C0E14",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
