@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0C0E14">
+<title>Import MBB Jun19–Jul7</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0C0E14;color:#EFF2FA;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:30px 20px;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.card{background:#161B27;border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:24px;width:100%;max-width:380px}
+h1{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+p{font-size:.82rem;color:#8A9BBE;line-height:1.5;margin-bottom:14px}
+.month-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.84rem}
+.month-row:last-child{border-bottom:none}
+.badge{background:rgba(31,217,164,.1);color:#1FD9A4;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge-partial{background:rgba(255,200,0,.1);color:#FFC800;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px}
+.note{font-size:.74rem;color:#5B8A6A;background:rgba(31,217,164,.07);border-radius:10px;padding:8px 12px;margin-bottom:12px;line-height:1.5}
+.btn{width:100%;background:#1FD9A4;color:#000;font-size:1rem;font-weight:700;border:none;border-radius:16px;padding:15px;cursor:pointer;font-family:inherit;margin-top:6px}
+.btn:active{opacity:.85}
+.btn-skip{width:100%;background:rgba(255,255,255,.05);color:#8A9BBE;font-size:.85rem;font-weight:600;border:none;border-radius:16px;padding:12px;cursor:pointer;font-family:inherit}
+#status{text-align:center;font-size:.88rem;font-weight:600;min-height:24px}
+.success{color:#1FD9A4}.error{color:#FF6060}
+.progress-bar{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;background:#1FD9A4;border-radius:3px;width:0%;transition:width .5s}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>📥 MBB Import #3</h1>
+  <p>Jun 19–30 剩余 + Jul 1–7 + TNG 充值（截图数据）</p>
+
+  <div class="note">✅ TNG 充值已录入 — 从此以后全部记录</div>
+
+  <div class="month-row">
+    <span style="color:#EFF2FA;font-weight:600">🗓 Jun 19–30, 2026</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="color:#5B6788;font-size:.75rem">23笔</span>
+      <span class="badge-partial">截图</span>
+    </div>
+  </div>
+  <div class="month-row">
+    <span style="color:#EFF2FA;font-weight:600">🗓 Jul 1–7, 2026</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="color:#5B6788;font-size:.75rem">16笔</span>
+      <span class="badge-partial">截图</span>
+    </div>
+  </div>
+
+  <div class="progress-bar" id="bar"><div class="progress-fill" id="fill"></div></div>
+  <div id="status" style="margin-top:10px"></div>
+
+  <button class="btn" onclick="doImport()" id="importBtn" style="margin-top:16px">开始导入</button>
+  <div style="height:8px"></div>
+  <button class="btn-skip" onclick="goApp()">跳过，直接进入 App</button>
+</div>
+
+<div style="text-align:center;font-size:.75rem;color:#5B6788;max-width:320px;line-height:1.5">
+  已有记录不会重复。CAR / CC CARD 自转账仍过滤。
+</div>
+
+<script>
+const MBB_TXNS = [
+
+// ═══ JUNE 2026 — 补漏：18日 TNG（import2 已过滤，现补录）═══
+{id:6199,type:'expense',cat:'transport',desc:'TNG 充值',amt:500.00,date:'2026-06-18'},
+
+// ═══ JUNE 2026 — 19–30日 ═══
+// Income
+{id:6201,type:'income',cat:'other',desc:'Ng Tzu Yeh 转账',amt:213.24,date:'2026-06-25'},
+{id:6202,type:'income',cat:'commission',desc:'佣金 E Trend Realty PRO (Jun 25)',amt:44.16,date:'2026-06-26'},
+{id:6203,type:'income',cat:'other',desc:'Chong Shi Teng 收款',amt:165.00,date:'2026-06-29'},
+{id:6204,type:'income',cat:'other',desc:'Koo Chui Wei 收款',amt:60.00,date:'2026-06-29'},
+{id:6205,type:'income',cat:'other',desc:'Foo Wei Hong 收款',amt:210.00,date:'2026-06-29'},
+{id:6206,type:'income',cat:'other',desc:'Profit Paid (存款利润)',amt:2.92,date:'2026-06-30'},
+// Expenses Jun 19-30
+{id:6136,type:'expense',cat:'other',desc:'Wise 海外转账',amt:500.00,date:'2026-06-22'},
+{id:6137,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:200.00,date:'2026-06-22'},
+{id:6138,type:'expense',cat:'other',desc:'Chang Jian Xiang 付款',amt:260.00,date:'2026-06-23'},
+{id:6139,type:'expense',cat:'food',desc:'Low King Yow - 食物',amt:74.00,date:'2026-06-24'},
+{id:6140,type:'expense',cat:'housing',desc:'车贷 (Auto Debit)',amt:1487.52,date:'2026-06-24'},
+{id:6141,type:'expense',cat:'other',desc:'S&Y Printing 印刷',amt:200.00,date:'2026-06-24'},
+{id:6142,type:'expense',cat:'transport',desc:'停车费 Andari Parking 033',amt:500.00,date:'2026-06-24'},
+{id:6143,type:'expense',cat:'other',desc:'Monee Capital 还款',amt:414.49,date:'2026-06-25'},
+{id:6144,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:45.00,date:'2026-06-25'},
+{id:6145,type:'expense',cat:'other',desc:'QR 付款 (MBBQR)',amt:57.10,date:'2026-06-27'},
+{id:6146,type:'expense',cat:'other',desc:'Project E PLT - OGSM FLX AVA',amt:598.00,date:'2026-06-29'},
+{id:6147,type:'expense',cat:'food',desc:'Uoshinkepong 餐饮',amt:631.10,date:'2026-06-29'},
+{id:6148,type:'expense',cat:'other',desc:'Maimunah Binti Thom - 装修费',amt:720.00,date:'2026-06-29'},
+{id:6149,type:'expense',cat:'transport',desc:'TNG 充值',amt:500.00,date:'2026-06-29'},
+{id:6150,type:'expense',cat:'other',desc:'Gaption Synergy SDN BH',amt:258.00,date:'2026-06-30'},
+{id:6151,type:'expense',cat:'other',desc:'Foo Wei Hong 付款',amt:70.00,date:'2026-06-30'},
+
+// ═══ JULY 2026 — 1–7日 ═══
+// Income
+{id:7001,type:'income',cat:'commission',desc:'佣金 E Trend Realty PRO (Jul 2)',amt:676.97,date:'2026-07-03'},
+{id:7002,type:'income',cat:'other',desc:'Foo Wei Hong 收款',amt:70.00,date:'2026-07-05'},
+// Expenses Jul
+{id:7101,type:'expense',cat:'transport',desc:'油费 (Setel)',amt:200.00,date:'2026-07-03'},
+{id:7102,type:'expense',cat:'other',desc:'Leong Munly - KD K',amt:272.00,date:'2026-07-03'},
+{id:7103,type:'expense',cat:'other',desc:'Tenaga Nasional 电费',amt:99.40,date:'2026-07-03'},
+{id:7104,type:'expense',cat:'food',desc:'Laing Chong 食物',amt:10.00,date:'2026-07-04'},
+{id:7105,type:'expense',cat:'food',desc:'Tang Pheng Kew 食物',amt:23.00,date:'2026-07-04'},
+{id:7106,type:'expense',cat:'food',desc:'KL Salted Chicken 食物',amt:24.00,date:'2026-07-04'},
+{id:7107,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:1016.74,date:'2026-07-04'},
+{id:7108,type:'expense',cat:'other',desc:'QR 付款 (MBBQR)',amt:300.30,date:'2026-07-05'},
+{id:7109,type:'expense',cat:'entertainment',desc:'Alicia Law - 旅游费 3个月',amt:1500.00,date:'2026-07-05'},
+{id:7110,type:'expense',cat:'shopping',desc:'ShopeePay 充值',amt:15.19,date:'2026-07-05'},
+{id:7111,type:'expense',cat:'transport',desc:'TNG 充值',amt:300.00,date:'2026-07-05'},
+{id:7112,type:'expense',cat:'shopping',desc:'FP-AEON 购物',amt:112.10,date:'2026-07-06'},
+{id:7113,type:'expense',cat:'other',desc:'Wise 海外转账',amt:200.00,date:'2026-07-06'},
+{id:7114,type:'expense',cat:'other',desc:'QR 付款 (MBBQR)',amt:100.00,date:'2026-07-07'},
+];
+
+function doImport(){
+  const btn = document.getElementById('importBtn');
+  btn.disabled = true;
+  btn.textContent = '导入中…';
+  try {
+    let existing = {};
+    try { existing = JSON.parse(localStorage.getItem('fos_data') || '{}'); } catch(e){}
+    const existingTxns = existing.txns || [];
+    const existingIds = new Set(existingTxns.map(t => t.id));
+    let added = 0;
+    for(const t of [...MBB_TXNS].reverse()){
+      if(!existingIds.has(t.id)){ existingTxns.unshift(t); added++; }
+    }
+    existingTxns.sort((a,b) => b.date.localeCompare(a.date));
+    existing.txns = existingTxns;
+    let pct = 0;
+    const fill = document.getElementById('fill');
+    const iv = setInterval(()=>{ pct=Math.min(pct+8,100); fill.style.width=pct+'%'; if(pct>=100)clearInterval(iv); },40);
+    localStorage.setItem('fos_data', JSON.stringify(existing));
+    setTimeout(()=>{
+      document.getElementById('status').innerHTML=`<span class="success">✅ 成功导入 ${added} 笔！</span>`;
+      btn.textContent='✅ 完成 — 跳转 App…';
+      setTimeout(goApp,1500);
+    },600);
+  } catch(e){
+    document.getElementById('status').innerHTML=`<span class="error">❌ 错误: ${e.message}</span>`;
+    btn.disabled=false; btn.textContent='重试';
+  }
+}
+function goApp(){ window.location.href='./'; }
+</script>
+</body>
+</html>
