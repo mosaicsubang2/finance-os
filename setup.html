@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0C0E14">
+<title>财务设置</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0C0E14;--card:#161B27;--card2:#1D2336;--border:rgba(255,255,255,.07);--mint:#1FD9A4;--coral:#FF6060;--gold:#F5C842;--lav:#9B8FFF;--text:#EFF2FA;--sub:#8A9BBE;--muted:#5B6788}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:20px 16px calc(env(safe-area-inset-bottom)+24px);max-width:440px;margin:0 auto}
+h1{font-size:1.2rem;font-weight:700;margin-bottom:4px;padding-top:calc(env(safe-area-inset-top)+8px)}
+.sub{font-size:.8rem;color:var(--sub);margin-bottom:20px}
+.section{font-size:.63rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:4px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row-left{display:flex;align-items:center;gap:10px}
+.ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.row-label{font-size:.85rem;font-weight:600}
+.row-sub{font-size:.68rem;color:var(--muted);margin-top:1px}
+.row-right{display:flex;align-items:center;gap:6px}
+.row-prefix{font-size:.8rem;color:var(--muted)}
+.row-input{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:6px 10px;color:var(--text);font-size:.9rem;font-weight:600;font-family:inherit;outline:none;width:100px;text-align:right;font-variant-numeric:tabular-nums;-webkit-appearance:none}
+.row-input:focus{border-color:var(--mint)}
+.badge{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:6px}
+.badge-g{background:rgba(31,217,164,.12);color:var(--mint)}
+.badge-r{background:rgba(255,96,96,.12);color:var(--coral)}
+.badge-y{background:rgba(245,200,66,.12);color:var(--gold)}
+.cc-bar{margin:10px 14px 12px}
+.cc-track{height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.cc-fill{height:100%;border-radius:4px;background:var(--coral);width:70%}
+.cc-labels{display:flex;justify-content:space-between;font-size:.63rem;color:var(--muted);margin-top:4px}
+.goal-row{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--border)}
+.goal-ico{width:40px;height:40px;border-radius:12px;background:rgba(245,200,66,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.goal-info{flex:1}
+.goal-name{font-size:.88rem;font-weight:700}
+.goal-meta{font-size:.7rem;color:var(--sub);margin-top:2px}
+.goal-amt{font-size:.95rem;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+.btn{width:100%;background:var(--mint);color:#000;font-size:1rem;font-weight:700;border:none;border-radius:16px;padding:15px;cursor:pointer;font-family:inherit;margin-top:20px;-webkit-tap-highlight-color:transparent}
+.btn:active{opacity:.85}
+#status{text-align:center;font-size:.88rem;font-weight:600;margin-top:12px;min-height:22px;color:var(--mint)}
+.alert{background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);border-radius:12px;padding:11px 14px;font-size:.78rem;color:var(--gold);line-height:1.55;margin-top:10px}
+</style>
+</head>
+<body>
+
+<h1>📋 财务设置</h1>
+<div class="sub">确认你的数字，点一下全部同步进 App</div>
+
+<!-- BALANCE -->
+<div class="section">当前账户余额</div>
+<div class="card">
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(31,217,164,.12)">🏦</div>
+      <div><div class="row-label">Maybank 余额</div><div class="row-sub">今天实际余额</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="balance" value="3000" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<!-- INCOME SOURCES -->
+<div class="section">每月收入来源</div>
+<div class="card">
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(31,217,164,.12)">🏠</div>
+      <div><div class="row-label">佣金 / Commission</div><div class="row-sub">平均月佣金</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="inc-commission" value="16000" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(91,143,255,.12)">🏘️</div>
+      <div><div class="row-label">租金收入</div><div class="row-sub">房子出租 RM2,000</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="inc-rental" value="2000" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(155,143,255,.12)">💼</div>
+      <div><div class="row-label">底薪 / Salary</div><div class="row-sub">如有固定底薪</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="inc-salary" value="0" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<!-- FIXED EXPENSES -->
+<div class="section">每月固定支出</div>
+<div class="card">
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(255,96,96,.12)">🚗</div>
+      <div><div class="row-label">Car Installment</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-car" value="1500" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(155,143,255,.12)">🏠</div>
+      <div><div class="row-label">House Installment</div><div class="row-sub">租金 RM2k 已覆盖 → 净 +RM500</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-house" value="1500" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(255,96,96,.12)">💳</div>
+      <div><div class="row-label">Credit Card 还款</div><div class="row-sub">建议 RM3,500–5,000 加速清</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-cc" value="3500" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(245,200,66,.12)">📣</div>
+      <div><div class="row-label">Facebook Ads</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-ads" value="800" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(245,200,66,.12)">🅿️</div>
+      <div><div class="row-label">Parking</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-parking" value="500" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(255,96,96,.12)">⛽</div>
+      <div><div class="row-label">Petrol</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-petrol" value="200" inputmode="decimal">
+    </div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(91,103,136,.2)">🤖</div>
+      <div><div class="row-label">AI Subscribe</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="fix-ai" value="100" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<!-- CC DEBT -->
+<div class="section">信用卡负债</div>
+<div class="card">
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(255,96,96,.12)">💳</div>
+      <div><div class="row-label">CC Outstanding</div><div class="row-sub">RM20,000 limit · 70% used</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="cc-balance" value="14000" inputmode="decimal">
+    </div>
+  </div>
+  <div class="cc-bar">
+    <div class="cc-track"><div class="cc-fill" id="cc-bar-fill"></div></div>
+    <div class="cc-labels"><span>RM 0</span><span id="cc-bar-pct">70% utilized</span><span>Limit RM 20,000</span></div>
+  </div>
+</div>
+
+<!-- GOAL -->
+<div class="section">储蓄目标</div>
+<div class="card">
+  <div class="goal-row">
+    <div class="goal-ico">💰</div>
+    <div class="goal-info">
+      <div class="goal-name">RM70K Cash Dec</div>
+      <div class="goal-meta">截止 2026年12月31日 · 5.8个月</div>
+    </div>
+    <div class="goal-amt">RM 70,000</div>
+  </div>
+  <div class="row">
+    <div class="row-left">
+      <div class="ico" style="background:rgba(245,200,66,.12)">🏦</div>
+      <div><div class="row-label">已经存了多少</div></div>
+    </div>
+    <div class="row-right">
+      <span class="row-prefix">RM</span>
+      <input class="row-input" type="number" id="goal-saved" value="0" inputmode="decimal">
+    </div>
+  </div>
+</div>
+
+<div class="alert">💡 CC 还款设 RM3,500/月 → 约 Oct 前清零，之后每月多 RM3,500 流入储蓄</div>
+
+<button class="btn" onclick="doSetup()">✅ 一键同步进 App</button>
+<div id="status"></div>
+
+<script>
+document.getElementById('cc-balance').addEventListener('input', function(){
+  const v = parseFloat(this.value)||0;
+  const pct = Math.min(100, Math.round(v/200));
+  document.getElementById('cc-bar-fill').style.width = pct+'%';
+  document.getElementById('cc-bar-pct').textContent = pct+'% utilized';
+});
+
+function doSetup(){
+  try {
+    let d = {};
+    try { d = JSON.parse(localStorage.getItem('fos_data')||'{}'); } catch(e){}
+
+    const g = id => parseFloat(document.getElementById(id).value)||0;
+
+    // balance
+    d.currentBalance = g('balance');
+    const n = new Date();
+    d.lastBalanceUpdate = `${n.getMonth()+1}月${n.getDate()}日 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+
+    // income sources
+    if(!d.incomeSources) d.incomeSources = [];
+    function setInc(id, name, icon, amt){
+      const idx = d.incomeSources.findIndex(s=>s.id===id);
+      if(idx>=0) d.incomeSources[idx].amt = amt;
+      else d.incomeSources.push({id, name, icon, amt});
+    }
+    setInc(1, '底薪', '💼', g('inc-salary'));
+    setInc(2, '佣金', '🏠', g('inc-commission'));
+    setInc(3, '租金收入', '🏘️', g('inc-rental'));
+
+    // fixed expenses
+    if(!d.fixed) d.fixed = [];
+    function setFixed(id, name, icon, color, amt){
+      const idx = d.fixed.findIndex(f=>f.id===id);
+      if(idx>=0){ d.fixed[idx].amt = amt; }
+      else d.fixed.push({id, name, icon, color, amt});
+    }
+    setFixed(1,  'Car Installment',  '🚗', 'rgba(255,96,96,.12)',   g('fix-car'));
+    setFixed(2,  'Credit Card',      '💳', 'rgba(155,143,255,.12)', g('fix-cc'));
+    setFixed(3,  'Facebook Ads',     '📣', 'rgba(245,200,66,.12)',  g('fix-ads'));
+    setFixed(4,  'AI Subscribe',     '🤖', 'rgba(31,217,164,.12)',  g('fix-ai'));
+    setFixed(5,  'Petrol',           '⛽', 'rgba(255,96,96,.12)',   g('fix-petrol'));
+    setFixed(7,  'Parking',          '🅿️', 'rgba(245,200,66,.12)', g('fix-parking'));
+    setFixed(11, 'House Installment','🏠', 'rgba(155,143,255,.12)', g('fix-house'));
+
+    // CC outstanding (store for reference)
+    d.ccBalance = g('cc-balance');
+    d.ccLimit = 20000;
+
+    // RM70k goal
+    if(!d.goals) d.goals = [];
+    const GOAL_ID = 70000202612;
+    d.goals = d.goals.filter(g=>g.id!==GOAL_ID);
+    d.goals.push({id:GOAL_ID, name:'RM70K Cash Dec', icon:'💰', target:70000, saved:g('goal-saved'), date:'2026-12-31'});
+
+    localStorage.setItem('fos_data', JSON.stringify(d));
+    document.getElementById('status').textContent = '✅ 全部同步成功！跳转中…';
+    setTimeout(()=>{ window.location.href = './'; }, 1200);
+  } catch(e){
+    document.getElementById('status').textContent = '❌ 出错了: '+e.message;
+  }
+}
+</script>
+</body>
+</html>
